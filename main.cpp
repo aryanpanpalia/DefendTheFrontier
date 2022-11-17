@@ -8,7 +8,7 @@
 using namespace std;
 using namespace FEHIcon;
 
-void DrawMenu() {
+int Menu() {
     // Icons for all the menu options
     Icon playButton;
     char playString[] = "Play Game";
@@ -57,9 +57,8 @@ void DrawMenu() {
     LCD.FillRectangle(buttonStartX, creditsStartY, buttonWidth, buttonHeight);
     viewCredits.Draw();
 
-    int running = 1;
     float x, y;
-    while(running){
+    while(true){
         // Waits for someone to touch the screen
         while(!LCD.Touch(&x, &y));
 
@@ -70,12 +69,16 @@ void DrawMenu() {
         if(x >= buttonStartX && x <= buttonStartX + buttonWidth){
             if(y >= playStartY && y <= playStartY + buttonHeight){
                 cout << "Play\n";
+                return 0;
             } else if(y >= statsStartY && y <= statsStartY + buttonHeight){
                 cout << "Stats\n";
+                return 1;
             } else if(y >= instructionsStartY && y <= instructionsStartY + buttonHeight){
                 cout << "Instructions\n";
+                return 2;
             } else if(y >= creditsStartY && y <= creditsStartY + buttonHeight){
                 cout << "Credits\n";
+                return 3;
             }
         }
     }
@@ -84,7 +87,7 @@ void DrawMenu() {
 /* Entry point to the application */
 int main() {
     // Draws the menu
-    DrawMenu();
+    int selection = Menu();
 
     return 0;
 }
