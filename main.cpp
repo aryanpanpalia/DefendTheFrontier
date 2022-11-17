@@ -8,6 +8,38 @@
 using namespace std;
 using namespace FEHIcon;
 
+void Play(){
+    bool running = true;
+    bool pressed = false;
+    float x, y;
+    while(running){
+        LCD.Clear();
+
+        int playerWidth = 20, playerHeight = 20;
+        int playerX = (WINDOW_WIDTH - playerWidth) / 2;
+        int playerY = (WINDOW_HEIGHT - playerHeight) / 2;
+
+        LCD.DrawRectangle(playerX, playerY, playerWidth, playerHeight);
+
+        // On click
+        if(LCD.Touch(&x, &y) && !pressed) {
+            pressed = true;
+            cout << "Clicked at " << x << ", " << y << endl;
+        } 
+        // On hold
+        else if(LCD.Touch(&x, &y) && pressed) {
+            cout << "Held at " << x << ", " << y << endl;
+        }
+        // On Release
+        else if(!LCD.Touch(&x, &y) && pressed) {
+            pressed = false;
+            cout << "Released at " << x << ", " << y << endl;
+        }
+
+        LCD.Update();
+    }
+}
+
 int Menu() {
     // Icons for all the menu options
     Icon playButton;
@@ -88,6 +120,10 @@ int Menu() {
 int main() {
     // Draws the menu
     int selection = Menu();
+
+    if(selection == 0){
+        Play();
+    }
 
     return 0;
 }
