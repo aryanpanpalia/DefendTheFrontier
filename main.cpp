@@ -1,5 +1,6 @@
 #include "FEHLCD.h"
 #include <iostream>
+#include <math.h>
 
 // Defines the window width and height
 #define WINDOW_WIDTH 320
@@ -8,34 +9,63 @@
 using namespace std;
 using namespace FEHIcon;
 
+class Player {
+    public:
+        int x, y, width = 20, height = 20;
+        
+        Player(){
+            x = (WINDOW_WIDTH - width) / 2;
+            y = (WINDOW_HEIGHT - height) / 2;
+        }
+
+        int* getCenter(){
+            int* center = new int[2];
+            center[0] = x + width / 2;
+            center[1] = y + height / 2;
+            return center;
+        }
+
+        bool pointInPlayer(int px, int py) {
+            return x <= px && px <= x + width && y <= py && py <= y + height;
+        }
+};
+
 void Play(){
+    // Stores whether game loop is running
     bool running = true;
+
+    // Stores whether the screen is being pressed
     bool pressed = false;
+
+    // Location of where the screen has been pressed
     float x, y;
+
+    // Player object
+    Player player;
+
     while(running){
+        // Clears the screen then draws the player
         LCD.Clear();
-
-        int playerWidth = 20, playerHeight = 20;
-        int playerX = (WINDOW_WIDTH - playerWidth) / 2;
-        int playerY = (WINDOW_HEIGHT - playerHeight) / 2;
-
-        LCD.DrawRectangle(playerX, playerY, playerWidth, playerHeight);
+        LCD.DrawRectangle(player.x, player.y, player.width, player.height);
 
         // On click
         if(LCD.Touch(&x, &y) && !pressed) {
             pressed = true;
-            cout << "Clicked at " << x << ", " << y << endl;
+            if(!player.pointInPlayer(x, y)){
+                int* center = player.getCenter();
+                float dx = x - center[0];
+                float dy = center[1] - y;
+                float angle = atan2(dy, dx);
+                
+                cout << "Clicked @ angle " << angle << " radians" << endl;
+            }
         } 
-        // On hold
-        else if(LCD.Touch(&x, &y) && pressed) {
-            cout << "Held at " << x << ", " << y << endl;
-        }
         // On Release
         else if(!LCD.Touch(&x, &y) && pressed) {
             pressed = false;
-            cout << "Released at " << x << ", " << y << endl;
         }
 
+        // Updates the screen
         LCD.Update();
     }
 }
