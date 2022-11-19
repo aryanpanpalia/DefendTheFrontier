@@ -11,11 +11,23 @@ using namespace FEHIcon;
 
 class Player {
     public:
-        int x, y, width = 20, height = 20;
+        int width, height;
+        float x, y, velX, velY, accelX, accelY, forceX, forceY, forceG;
+        float mass;
         
         Player(){
+            width = 20;
+            height = 20;
+
             x = (WINDOW_WIDTH - width) / 2;
             y = (WINDOW_HEIGHT - height) / 2;
+
+            velX = 0;
+            velY = 0;
+            forceX = 0;
+            forceY = 0;
+
+            mass = 10;
         }
 
         int* getCenter(){
@@ -27,6 +39,81 @@ class Player {
 
         bool pointInPlayer(int px, int py) {
             return x <= px && px <= x + width && y <= py && py <= y + height;
+        }
+
+        void applyPhysics(float dt) {
+            float dragX = 0;
+            float dragY = 0;
+
+            float dragRatio;
+            if(velX == 0 || velY == 0){
+                dragRatio = 1;
+            } else {
+                dragRatio = fabs(velX / velY);
+            }
+
+            // if dragRatio < 1, |velX| < |velY| so dragX should be scaled down
+            // else, dragY should be scaled down
+            // Only have a drag force is the velocity is significant
+            if(dragRatio < 1){
+                if(velX < -0.5 || velX > 0.5) {
+                    dragX = velX > 0 ? -30 : 30;
+                    dragX *= dragRatio;
+                }
+
+                if(velY < -0.5 || velY > 0.5) {
+                    dragY = velY > 0 ? -30 : 30;
+                }
+            } else {                
+                if(velX < -0.5 || velX > 0.5) {
+                    dragX = velX > 0 ? -30 : 30;
+                }
+
+                if(velY < -0.5 || velY > 0.5) {
+                    dragY = velY > 0 ? -30 : 30;
+                    dragY /= dragRatio;
+                }
+            }   
+
+            // Snaps velocities to 0 if it comes close enough
+            if(-0.5 < velX && velX < 0.5){
+                velX = 0;
+            }
+
+            if(-0.5 < velY && velY < 0.5){
+                velY = 0;
+            }  
+
+            // Calculate net forces
+            float netForceX = forceX + dragX;
+            float netForceY = forceY + dragY;
+            
+            // Calculate net acceleration
+            float netAccelX = netForceX / mass;
+            float netAccelY = netForceY / mass;
+
+            // Updates x and y position
+            // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
+            x += velX * dt;
+            y -= velY * dt;
+            
+            // Updates velocity
+            velX += netAccelX * dt;
+            velY += netAccelY * dt;
+
+            // If adding the drag would change the direciton of the force, set the force to 0
+            // Else, add the drag to the force
+            if((forceX >= 0 && forceX + dragX <= 0) || (forceX <= 0 && forceX + dragX >= 0)){
+                forceX = 0;
+            } else {
+                forceX += dragX;
+            }
+
+            if((forceY >= 0 && forceY + dragY <= 0) || (forceY <= 0 && forceY + dragY >= 0)){
+                forceY = 0;
+            } else {
+                forceY += dragY;
+            }
         }
 };
 
@@ -57,13 +144,18 @@ void Play(){
                 float dy = center[1] - y;
                 float angle = atan2(dy, dx);
                 
-                cout << "Clicked @ angle " << angle << " radians" << endl;
+                // Add a force in the opposite direction of the click to the player
+                player.forceX += -250 * cos(angle);
+                player.forceY += -250 * sin(angle);
             }
         } 
         // On Release
         else if(!LCD.Touch(&x, &y) && pressed) {
             pressed = false;
         }
+
+        // Apply physics
+        player.applyPhysics(0.1);
 
         // Updates the screen
         LCD.Update();
