@@ -12,7 +12,7 @@ using namespace FEHIcon;
 class Player {
     public:
         int width, height;
-        float x, y, velX, velY, accelX, accelY, forceX, forceY, forceG;
+        float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
         float mass;
         
         Player(){
@@ -24,8 +24,10 @@ class Player {
 
             velX = 0;
             velY = 0;
+            velG = -5;
             forceX = 0;
             forceY = 0;
+            forceG = -25;
 
             mass = 10;
         }
@@ -60,15 +62,18 @@ class Player {
             // Calculate net acceleration
             float netAccelX = netForceX / mass;
             float netAccelY = netForceY / mass;
+            float netAccelG = forceG / mass;
 
             // Updates x and y position
             // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
             x += velX * dt;
             y -= velY * dt;
+            y -= velG * dt;
             
             // Updates velocity
             velX += netAccelX * dt;
             velY += netAccelY * dt;
+            velG += netAccelG * dt;
 
             // Snaps velocities to 0 if it comes close enough
             float vMagnitude = sqrt(pow(velX, 2) + pow(velY, 2));
@@ -122,7 +127,12 @@ void Play(){
                 
                 // Add a force in the opposite direction of the click to the player
                 player.forceX += -250 * cos(angle);
-                player.forceY += -250 * sin(angle);
+                player.forceY += -400 * sin(angle);
+
+                // Reset player object's velocities after a click
+                player.velG = 0;
+                player.velX = 0;
+                player.velY = 0;
             }
         } 
         // On Release
