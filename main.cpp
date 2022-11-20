@@ -45,44 +45,13 @@ class Player {
             float dragX = 0;
             float dragY = 0;
 
-            float dragRatio;
-            if(velX == 0 || velY == 0){
-                dragRatio = 1;
-            } else {
-                dragRatio = fabs(velX / velY);
+            // If there is a non-zero velocity, calculate a drag force
+            if(velX || velY){
+                float velAngle = atan2(velY, velX);
+                float dragAngle = -velAngle;
+                dragX = -30 * cos(dragAngle);
+                dragY = 30 * sin(dragAngle);
             }
-
-            // if dragRatio < 1, |velX| < |velY| so dragX should be scaled down
-            // else, dragY should be scaled down
-            // Only have a drag force is the velocity is significant
-            if(dragRatio < 1){
-                if(velX < -0.5 || velX > 0.5) {
-                    dragX = velX > 0 ? -30 : 30;
-                    dragX *= dragRatio;
-                }
-
-                if(velY < -0.5 || velY > 0.5) {
-                    dragY = velY > 0 ? -30 : 30;
-                }
-            } else {                
-                if(velX < -0.5 || velX > 0.5) {
-                    dragX = velX > 0 ? -30 : 30;
-                }
-
-                if(velY < -0.5 || velY > 0.5) {
-                    dragY = velY > 0 ? -30 : 30;
-                    dragY /= dragRatio;
-                }
-            }   
-
-            // Snaps velocities to 0 if it comes close enough
-            if(-0.5 < velX && velX < 0.5){
-                velX = 0;
-            }
-
-            if(-0.5 < velY && velY < 0.5){
-                velY = 0;
-            }  
 
             // Calculate net forces
             float netForceX = forceX + dragX;
@@ -100,6 +69,13 @@ class Player {
             // Updates velocity
             velX += netAccelX * dt;
             velY += netAccelY * dt;
+
+            // Snaps velocities to 0 if it comes close enough
+            float vMagnitude = sqrt(pow(velX, 2) + pow(velY, 2));
+            if(vMagnitude < 1) {
+                velX = 0;
+                velY = 0;
+            }  
 
             // If adding the drag would change the direciton of the force, set the force to 0
             // Else, add the drag to the force
