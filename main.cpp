@@ -96,6 +96,17 @@ class Player {
                 forceY += dragY;
             }
         }
+
+        void shoot(float angle) {
+            // Reset velocities after shooting
+            velG = 0;
+            velX = 0;
+            velY = 0;
+
+            // Add a force in the opposite direction of the shot
+            forceX += -250 * cos(angle);
+            forceY += -400 * sin(angle);
+        }
 };
 
 void Play(){
@@ -125,14 +136,7 @@ void Play(){
                 float dy = center[1] - y;
                 float angle = atan2(dy, dx);
                 
-                // Add a force in the opposite direction of the click to the player
-                player.forceX += -250 * cos(angle);
-                player.forceY += -400 * sin(angle);
-
-                // Reset player object's velocities after a click
-                player.velG = 0;
-                player.velX = 0;
-                player.velY = 0;
+                player.shoot(angle);
             }
         } 
         // On Release
