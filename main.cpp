@@ -112,6 +112,7 @@ void Player::render() {
 
 Bullet::Bullet(float initialX, float initialY, float a) {
     radius = 2;
+    active=true;
     
     x = initialX;
     y = initialY;
@@ -158,7 +159,9 @@ void Game::render() {
     player.render();
 
     for(int i = 0; i < numBullets; i++) {
-        bullets[i].render();
+        if(bullets[i].active){
+            bullets[i].render();
+        }
     }
 
     LCD.Update();
@@ -168,7 +171,20 @@ void Game::update() {
     player.applyPhysics(0.1);
 
     for(int i = 0; i < numBullets; i++) {
-        bullets[i].applyPhysics(0.1);
+        // Create alias to bullets[i]
+        Bullet &bullet = bullets[i];
+        
+        if(bullet.active) {
+            int bRadius = bullet.radius;
+            
+            // Apply the physics to the bullet
+            bullet.applyPhysics(0.1);
+
+            // If the bullet touches the edge, make it inactive
+            if(bullet.x <= bRadius || bullet.x >= WINDOW_WIDTH - bRadius || bullet.y <= bRadius || bullet.y >= WINDOW_HEIGHT - bRadius) {
+                bullet.active = false;
+            }
+        }
     }
 }
 
