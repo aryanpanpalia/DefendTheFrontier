@@ -103,6 +103,10 @@ void Player::shoot(float angle) {
     forceY += -400 * sin(angle);
 }
 
+void Player::render() {
+    LCD.FillRectangle(x, y, width, height);
+}
+
 Bullet::Bullet(float initialX, float initialY, float angle) {
     width = 5;
     height = 2;
@@ -132,6 +136,10 @@ void Bullet::applyPhysics(float dt) {
     y -= velY * dt;
 }
 
+void Bullet::render() {
+    LCD.FillRectangle(x, y, width, height);
+}
+
 Game::Game() {
     player.game = this;
     numBullets = 0;
@@ -140,6 +148,25 @@ Game::Game() {
 
 Game::~Game() {
     free(bullets);
+}
+
+void Game::render() {
+    LCD.Clear();
+    player.render();
+
+    for(int i = 0; i < numBullets; i++) {
+        bullets[i].render();
+    }
+
+    LCD.Update();
+}
+
+void Game::update() {
+    player.applyPhysics(0.1);
+
+    for(int i = 0; i < numBullets; i++) {
+        bullets[i].applyPhysics(0.1);
+    }
 }
 
 void Play(){
@@ -159,9 +186,8 @@ void Play(){
     Player &player = game.player;
 
     while(running){
-        // Clears the screen then draws the player
-        LCD.Clear();
-        LCD.DrawRectangle(player.x, player.y, player.width, player.height);
+        // Render game
+        game.render();
 
         // On click
         if(LCD.Touch(&x, &y) && !pressed) {
@@ -180,11 +206,8 @@ void Play(){
             pressed = false;
         }
 
-        // Apply physics
-        player.applyPhysics(0.1);
-
-        // Updates the screen
-        LCD.Update();
+        // Update game
+        game.update();
     }
 }
 

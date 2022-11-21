@@ -15,6 +15,7 @@ class Player {
         bool pointInPlayer(int px, int py);
         void applyPhysics(float dt);
         void shoot(float angle);
+        void render();
 };
 
 class Bullet {
@@ -27,6 +28,7 @@ class Bullet {
         int* getCenter();
         bool pointInBullet(int px, int py);
         void applyPhysics(float dt);
+        void render();
 };
 
 class Game {
@@ -37,6 +39,8 @@ class Game {
 
         Game();
         ~Game();
+        void render();
+        void update();
 };
 
 #endif
