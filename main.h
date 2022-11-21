@@ -20,9 +20,10 @@ class Player {
 
 class Bullet {
     public:
-        int width, height;
+        int radius;
         float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
         float mass;
+        float angle;
 
         Bullet(float initialX, float initialY, float angle);
         int* getCenter();

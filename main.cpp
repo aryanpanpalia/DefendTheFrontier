@@ -101,32 +101,35 @@ void Player::shoot(float angle) {
     // Add a force in the opposite direction of the shot
     forceX += -250 * cos(angle);
     forceY += -400 * sin(angle);
+
+    int *center = getCenter();
+    game->bullets[game->numBullets++] = Bullet(center[0], center[1], angle);
 }
 
 void Player::render() {
     LCD.FillRectangle(x, y, width, height);
 }
 
-Bullet::Bullet(float initialX, float initialY, float angle) {
-    width = 5;
-    height = 2;
-
+Bullet::Bullet(float initialX, float initialY, float a) {
+    radius = 2;
+    
     x = initialX;
     y = initialY;
-
-    velX = 10 * cos(angle);
-    velY = 10 * sin(angle);
+    angle = a;
+    
+    velX = 10 * cos(a);
+    velY = 10 * sin(a);
 }
 
 int* Bullet::getCenter() {
     int* center = new int[2];
-    center[0] = x + width / 2;
-    center[1] = y + height / 2;
+    center[0] = x;
+    center[1] = y;
     return center;
 }
 
 bool Bullet::pointInBullet(int px, int py) {
-    return x <= px && px <= x + width && y <= py && py <= y + height;
+    return sqrt(pow(px - x, 2) + pow(py - y, 2)) <= radius;
 }
 
 void Bullet::applyPhysics(float dt) {
@@ -137,7 +140,7 @@ void Bullet::applyPhysics(float dt) {
 }
 
 void Bullet::render() {
-    LCD.FillRectangle(x, y, width, height);
+    LCD.FillCircle(x, y, 2);
 }
 
 Game::Game() {
