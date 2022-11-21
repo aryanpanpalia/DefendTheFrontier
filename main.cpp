@@ -103,6 +103,44 @@ void Player::shoot(float angle) {
     forceY += -400 * sin(angle);
 }
 
+Bullet::Bullet(float initialX, float initialY, float angle) {
+    width = 5;
+    height = 2;
+
+    x = initialX;
+    y = initialY;
+
+    velX = 10 * cos(angle);
+    velY = 10 * sin(angle);
+}
+
+int* Bullet::getCenter() {
+    int* center = new int[2];
+    center[0] = x + width / 2;
+    center[1] = y + height / 2;
+    return center;
+}
+
+bool Bullet::pointInBullet(int px, int py) {
+    return x <= px && px <= x + width && y <= py && py <= y + height;
+}
+
+void Bullet::applyPhysics(float dt) {
+    // Updates x and y position
+    // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
+    x += velX * dt;
+    y -= velY * dt;
+}
+
+Game::Game() {
+    player.game = this;
+    numBullets = 0;
+    bullets = (Bullet *) malloc(1000 * sizeof(Bullet));
+}
+
+Game::~Game() {
+    free(bullets);
+}
 
 void Play(){
     // Stores whether game loop is running
@@ -114,8 +152,11 @@ void Play(){
     // Location of where the screen has been pressed
     float x, y;
 
-    // Player object
-    Player player;
+    // Game object
+    Game game;
+
+    // Alias/Reference to game's player object
+    Player &player = game.player;
 
     while(running){
         // Clears the screen then draws the player

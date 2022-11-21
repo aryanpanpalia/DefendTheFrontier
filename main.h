@@ -1,8 +1,11 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+class Game;
+
 class Player {
     public:
+        Game *game;
         int width, height;
         float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
         float mass;
@@ -12,6 +15,28 @@ class Player {
         bool pointInPlayer(int px, int py);
         void applyPhysics(float dt);
         void shoot(float angle);
+};
+
+class Bullet {
+    public:
+        int width, height;
+        float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
+        float mass;
+
+        Bullet(float initialX, float initialY, float angle);
+        int* getCenter();
+        bool pointInBullet(int px, int py);
+        void applyPhysics(float dt);
+};
+
+class Game {
+    public:
+        Player player;
+        int numBullets;
+        Bullet *bullets;
+
+        Game();
+        ~Game();
 };
 
 #endif
