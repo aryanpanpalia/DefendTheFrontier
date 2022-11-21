@@ -43,6 +43,7 @@ class Game {
         ~Game();
         void render();
         void update();
+        bool hasEnded();
 };
 
 #endif

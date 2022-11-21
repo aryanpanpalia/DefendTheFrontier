@@ -173,7 +173,7 @@ void Game::update() {
     for(int i = 0; i < numBullets; i++) {
         // Create alias to bullets[i]
         Bullet &bullet = bullets[i];
-        
+
         if(bullet.active) {
             int bRadius = bullet.radius;
             
@@ -188,10 +188,11 @@ void Game::update() {
     }
 }
 
-void Play(){
-    // Stores whether game loop is running
-    bool running = true;
+bool Game::hasEnded() {
+    return player.x <= 0 || player.x >= WINDOW_WIDTH - player.width || player.y <= 0 || player.y >= WINDOW_HEIGHT - player.height;
+}
 
+void Play(){
     // Stores whether the screen is being pressed
     bool pressed = false;
 
@@ -204,7 +205,8 @@ void Play(){
     // Alias/Reference to game's player object
     Player &player = game.player;
 
-    while(running){
+    // Keep running the game loop if the game has not ended
+    while(!game.hasEnded()){
         // Render game
         game.render();
 
