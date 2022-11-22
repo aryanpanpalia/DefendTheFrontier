@@ -1,11 +1,13 @@
 #include <iostream>
 #include <math.h>
 #include "FEHLCD.h"
+#include "FEHUtility.h"
 #include "main.h"
 
 // Defines the window width and height
 #define WINDOW_WIDTH 320
 #define WINDOW_HEIGHT 240
+#define PI 3.1415
 
 using namespace std;
 using namespace FEHIcon;
@@ -144,14 +146,56 @@ void Bullet::render() {
     LCD.FillCircle(x, y, 2);
 }
 
+Enemy::Enemy(float initialX, float initialY, float a) {
+    width = 15;
+    height = 15;
+    active = false;
+    activated = false;
+
+    x = initialX;
+    y = initialY;
+
+    velX = cos(a);
+    velY = sin(a);
+}
+
+int* Enemy::getCenter() {
+    int* center = new int[2];
+    center[0] = x + width / 2;
+    center[1] = y + height / 2;
+    return center;
+}
+
+bool Enemy::pointInEnemy(int px, int py) {
+    return x <= px && px <= x + width && y <= py && py <= y + height;
+}
+
+void Enemy::update() {
+    // Updates x and y position
+    // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
+    x += velX;
+    y -= velY;
+}
+
+void Enemy::render() {
+    LCD.SetFontColor(RED);
+    LCD.FillRectangle(x, y, width, height);
+    LCD.SetFontColor(WHITE);
+}
+
 Game::Game() {
     player.game = this;
     numBullets = 0;
+    numEnemies = 0;
     bullets = (Bullet *) malloc(1000 * sizeof(Bullet));
+    enemies = (Enemy *) malloc(1000 * sizeof(Enemy));
+
+    lastEnemySpawnTime = TimeNow();
 }
 
 Game::~Game() {
     free(bullets);
+    free(enemies);
 }
 
 void Game::render() {
@@ -161,6 +205,12 @@ void Game::render() {
     for(int i = 0; i < numBullets; i++) {
         if(bullets[i].active){
             bullets[i].render();
+        }
+    }
+
+    for(int i = 0; i < numEnemies; i++) {
+        if(enemies[i].active) {
+            enemies[i].render();
         }
     }
 
@@ -187,6 +237,63 @@ void Game::update() {
             }
         }
     }
+
+    for(int i = 0; i < numEnemies; i++) {
+        // Create alias for enemies[i]
+        Enemy &enemy = enemies[i];
+
+        // Only update enemy if it is active or has not been activated yet
+        if(enemy.active || !enemy.activated) {
+            enemy.update();
+
+            // If the enemy is outside the screen and already activated, it should no longer be active
+            // Else if the enemy is inside the screen, if it isn't activated it should be
+            if(enemy.x <= 0 || enemy.x >= WINDOW_WIDTH - enemy.width || enemy.y <= 0 || enemy.y >= WINDOW_HEIGHT - enemy.height) {
+                if(enemy.activated) {
+                    enemy.active = false;
+                }
+            } else {
+                if(!enemy.activated) {
+                    enemy.active = true;
+                    enemy.activated = true;
+                }
+            }
+        }
+    }
+
+    // Gets time since last enemy was spawned
+    float timeSinceNewEnemy = TimeNow() - lastEnemySpawnTime;
+
+    // If it has been 2 seconds since an enemy was spawned, spawn a new enemy and reset the spawn timer
+    if(timeSinceNewEnemy > 2) {
+        float initialX, initialY, angle;
+
+        int side = rand() % 4;
+        switch(side) {
+            case 0:
+                initialX = 340;
+                initialY = (rand() % 280) - 20;
+                break;
+            case 1:
+                initialX = (rand() % 360) - 20;
+                initialY = -20;
+                break;
+            case 2:
+                initialX = -20;
+                initialY = (rand() % 280) - 20;
+                break;
+            case 3:
+                initialX = (rand() % 360) - 20;
+                initialY = 260;
+                break;
+        }
+
+        angle = atan2(initialY - player.y, player.x - initialX);
+
+        enemies[numEnemies++] = Enemy(initialX, initialY, angle);
+        lastEnemySpawnTime = TimeNow();
+    }
+
 }
 
 bool Game::hasEnded() {

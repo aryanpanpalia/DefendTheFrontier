@@ -33,11 +33,28 @@ class Bullet {
         void render();
 };
 
+class Enemy {
+    public:
+        int width, height;
+        float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
+        float mass;
+        bool active, activated;
+
+        Enemy(float initialX, float initialY, float angle);
+        int* getCenter();
+        bool pointInEnemy(int px, int py);
+        void update();
+        void render();  
+};
+
 class Game {
     public:
         Player player;
-        int numBullets;
+        int numBullets, numEnemies;
         Bullet *bullets;
+        Enemy *enemies;
+
+        float lastEnemySpawnTime;
 
         Game();
         ~Game();
