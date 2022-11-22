@@ -38,7 +38,7 @@ bool Player::pointInPlayer(int px, int py) {
     return x <= px && px <= x + width && y <= py && py <= y + height;
 }
 
-void Player::applyPhysics() {
+void Player::update() {
     float dragX = 0;
     float dragY = 0;
 
@@ -133,7 +133,7 @@ bool Bullet::pointInBullet(int px, int py) {
     return sqrt(pow(px - x, 2) + pow(py - y, 2)) <= radius;
 }
 
-void Bullet::applyPhysics() {
+void Bullet::update() {
     // Updates x and y position
     // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
     x += velX;
@@ -168,7 +168,8 @@ void Game::render() {
 }
 
 void Game::update() {
-    player.applyPhysics();
+    // Update player object
+    player.update();
 
     for(int i = 0; i < numBullets; i++) {
         // Create alias to bullets[i]
@@ -177,8 +178,8 @@ void Game::update() {
         if(bullet.active) {
             int bRadius = bullet.radius;
             
-            // Apply the physics to the bullet
-            bullet.applyPhysics();
+            // Update bullet object
+            bullet.update();
 
             // If the bullet touches the edge, make it inactive
             if(bullet.x <= bRadius || bullet.x >= WINDOW_WIDTH - bRadius || bullet.y <= bRadius || bullet.y >= WINDOW_HEIGHT - bRadius) {
