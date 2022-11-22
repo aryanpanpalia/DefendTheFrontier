@@ -19,10 +19,10 @@ Player::Player() {
 
     velX = 0;
     velY = 0;
-    velG = -5;
+    velG = -0.5;
     forceX = 0;
     forceY = 0;
-    forceG = -25;
+    forceG = -0.5;
 
     mass = 10;
 }
@@ -38,7 +38,7 @@ bool Player::pointInPlayer(int px, int py) {
     return x <= px && px <= x + width && y <= py && py <= y + height;
 }
 
-void Player::applyPhysics(float dt) {
+void Player::applyPhysics() {
     float dragX = 0;
     float dragY = 0;
 
@@ -46,8 +46,8 @@ void Player::applyPhysics(float dt) {
     if(velX || velY){
         float velAngle = atan2(velY, velX);
         float dragAngle = -velAngle;
-        dragX = -30 * cos(dragAngle);
-        dragY = 30 * sin(dragAngle);
+        dragX = -cos(dragAngle);
+        dragY = sin(dragAngle);
     }
 
     // Calculate net forces
@@ -61,18 +61,18 @@ void Player::applyPhysics(float dt) {
 
     // Updates x and y position
     // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
-    x += velX * dt;
-    y -= velY * dt;
-    y -= velG * dt;
+    x += velX;
+    y -= velY;
+    y -= velG;
     
     // Updates velocity
-    velX += netAccelX * dt;
-    velY += netAccelY * dt;
-    velG += netAccelG * dt;
+    velX += netAccelX;
+    velY += netAccelY;
+    velG += netAccelG;
 
     // Snaps velocities to 0 if it comes close enough
     float vMagnitude = sqrt(pow(velX, 2) + pow(velY, 2));
-    if(vMagnitude < 1) {
+    if(vMagnitude < 0.1) {
         velX = 0;
         velY = 0;
     }  
@@ -99,8 +99,8 @@ void Player::shoot(float angle) {
     velY = 0;
 
     // Add a force in the opposite direction of the shot
-    forceX += -250 * cos(angle);
-    forceY += -400 * sin(angle);
+    forceX += -8.0 * cos(angle);
+    forceY += -8.0 * sin(angle);
 
     int *center = getCenter();
     game->bullets[game->numBullets++] = Bullet(center[0], center[1], angle);
@@ -118,8 +118,8 @@ Bullet::Bullet(float initialX, float initialY, float a) {
     y = initialY;
     angle = a;
     
-    velX = 10 * cos(a);
-    velY = 10 * sin(a);
+    velX = cos(a);
+    velY = sin(a);
 }
 
 int* Bullet::getCenter() {
@@ -133,11 +133,11 @@ bool Bullet::pointInBullet(int px, int py) {
     return sqrt(pow(px - x, 2) + pow(py - y, 2)) <= radius;
 }
 
-void Bullet::applyPhysics(float dt) {
+void Bullet::applyPhysics() {
     // Updates x and y position
     // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
-    x += velX * dt;
-    y -= velY * dt;
+    x += velX;
+    y -= velY;
 }
 
 void Bullet::render() {
@@ -168,7 +168,7 @@ void Game::render() {
 }
 
 void Game::update() {
-    player.applyPhysics(0.1);
+    player.applyPhysics();
 
     for(int i = 0; i < numBullets; i++) {
         // Create alias to bullets[i]
@@ -178,7 +178,7 @@ void Game::update() {
             int bRadius = bullet.radius;
             
             // Apply the physics to the bullet
-            bullet.applyPhysics(0.1);
+            bullet.applyPhysics();
 
             // If the bullet touches the edge, make it inactive
             if(bullet.x <= bRadius || bullet.x >= WINDOW_WIDTH - bRadius || bullet.y <= bRadius || bullet.y >= WINDOW_HEIGHT - bRadius) {
