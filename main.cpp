@@ -340,7 +340,115 @@ void Play(){
     }
 }
 
-int Menu() {
+void Statistics() {
+    Icon backButton;
+    char backString[] = "Back";
+
+    // Setting button width and height as constants
+    int buttonWidth = 100;
+    int buttonHeight = 40;
+
+    // Initial XY position of back button    
+    int buttonStartX = (WINDOW_WIDTH - buttonWidth) / 2;
+    int buttonStartY = 150;
+
+    backButton.SetProperties(backString, buttonStartX, buttonStartY, buttonWidth, buttonHeight, RED, WHITE);
+    
+    LCD.Clear();
+
+    LCD.WriteAt("Viewing Statistics", (WINDOW_WIDTH / 2) - 108, 50);
+
+    LCD.SetFontColor(RED);
+    LCD.FillRectangle(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
+    backButton.Draw();
+
+    float x, y;
+    while(true){
+        // Waits for someone to touch the screen
+        while(!LCD.Touch(&x, &y));
+
+        // Waits for someone to release their touch
+        while(LCD.Touch(&x, &y));
+
+        if(x >= buttonStartX && x <= buttonStartX + buttonWidth && y >= buttonStartY && y <= buttonStartY + buttonHeight){
+            return;
+        }
+    }
+}
+
+void Instructions() {
+    Icon backButton;
+    char backString[] = "Back";
+
+    // Setting button width and height as constants
+    int buttonWidth = 100;
+    int buttonHeight = 40;
+
+    // Initial XY position of back button    
+    int buttonStartX = (WINDOW_WIDTH - buttonWidth) / 2;
+    int buttonStartY = 150;
+
+    backButton.SetProperties(backString, buttonStartX, buttonStartY, buttonWidth, buttonHeight, RED, WHITE);
+    
+    LCD.Clear();
+
+    LCD.WriteAt("Viewing Instructions", (WINDOW_WIDTH / 2) - 120, 50);
+
+    LCD.SetFontColor(RED);
+    LCD.FillRectangle(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
+    backButton.Draw();
+
+    float x, y;
+    while(true){
+        // Waits for someone to touch the screen
+        while(!LCD.Touch(&x, &y));
+
+        // Waits for someone to release their touch
+        while(LCD.Touch(&x, &y));
+
+        if(x >= buttonStartX && x <= buttonStartX + buttonWidth && y >= buttonStartY && y <= buttonStartY + buttonHeight){
+            return;
+        }
+    }
+}
+
+void Credits() {
+    Icon backButton;
+    char backString[] = "Back";
+
+    // Setting button width and height as constants
+    int buttonWidth = 100;
+    int buttonHeight = 40;
+
+    // Initial XY position of back button    
+    int buttonStartX = (WINDOW_WIDTH - buttonWidth) / 2;
+    int buttonStartY = 150;
+
+    backButton.SetProperties(backString, buttonStartX, buttonStartY, buttonWidth, buttonHeight, RED, WHITE);
+    
+    LCD.Clear();
+
+    LCD.WriteAt("Viewing Credits", (WINDOW_WIDTH / 2) - 90, 50);
+
+    LCD.SetFontColor(RED);
+    LCD.FillRectangle(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
+    backButton.Draw();
+
+    float x, y;
+    while(true){
+        // Waits for someone to touch the screen
+        while(!LCD.Touch(&x, &y));
+
+        // Waits for someone to release their touch
+        while(LCD.Touch(&x, &y));
+
+        if(x >= buttonStartX && x <= buttonStartX + buttonWidth && y >= buttonStartY && y <= buttonStartY + buttonHeight){
+            return;
+        }
+    }
+}
+
+void Menu() {
     // Icons for all the menu options
     Icon playButton;
     char playString[] = "Play Game";
@@ -370,27 +478,27 @@ int Menu() {
     viewInstructions.SetProperties(instructionsString, buttonStartX, instructionsStartY, buttonWidth, buttonHeight, WHITE, BLACK);
     viewCredits.SetProperties(creditsString, buttonStartX, creditsStartY, buttonWidth, buttonHeight, RED, WHITE);
 
-    // Clears the screen then draws all the buttons
-    LCD.Clear();
-
-    LCD.SetFontColor(GREEN);
-    LCD.FillRectangle(buttonStartX, playStartY, buttonWidth, buttonHeight);
-    playButton.Draw();
-
-    LCD.SetFontColor(BLUE);
-    LCD.FillRectangle(buttonStartX, statsStartY, buttonWidth, buttonHeight);
-    viewStatistics.Draw();
-
-    LCD.SetFontColor(WHITE);
-    LCD.FillRectangle(buttonStartX, instructionsStartY, buttonWidth, buttonHeight);
-    viewInstructions.Draw();
-
-    LCD.SetFontColor(RED);
-    LCD.FillRectangle(buttonStartX, creditsStartY, buttonWidth, buttonHeight);
-    viewCredits.Draw();
-
     float x, y;
     while(true){
+        // Clears the screen then draws all the buttons
+        LCD.Clear();
+
+        LCD.SetFontColor(GREEN);
+        LCD.FillRectangle(buttonStartX, playStartY, buttonWidth, buttonHeight);
+        playButton.Draw();
+
+        LCD.SetFontColor(BLUE);
+        LCD.FillRectangle(buttonStartX, statsStartY, buttonWidth, buttonHeight);
+        viewStatistics.Draw();
+
+        LCD.SetFontColor(WHITE);
+        LCD.FillRectangle(buttonStartX, instructionsStartY, buttonWidth, buttonHeight);
+        viewInstructions.Draw();
+
+        LCD.SetFontColor(RED);
+        LCD.FillRectangle(buttonStartX, creditsStartY, buttonWidth, buttonHeight);
+        viewCredits.Draw();
+
         // Waits for someone to touch the screen
         while(!LCD.Touch(&x, &y));
 
@@ -400,17 +508,14 @@ int Menu() {
         // Depending on where the touch was at the end, do the following actions
         if(x >= buttonStartX && x <= buttonStartX + buttonWidth){
             if(y >= playStartY && y <= playStartY + buttonHeight){
-                cout << "Play\n";
-                return 0;
+                Play();
+                Sleep(1.0);
             } else if(y >= statsStartY && y <= statsStartY + buttonHeight){
-                cout << "Stats\n";
-                return 1;
+                Statistics();
             } else if(y >= instructionsStartY && y <= instructionsStartY + buttonHeight){
-                cout << "Instructions\n";
-                return 2;
+                Instructions();
             } else if(y >= creditsStartY && y <= creditsStartY + buttonHeight){
-                cout << "Credits\n";
-                return 3;
+                Credits();
             }
         }
     }
@@ -419,11 +524,7 @@ int Menu() {
 /* Entry point to the application */
 int main() {
     // Draws the menu
-    int selection = Menu();
-
-    if(selection == 0){
-        Play();
-    }
+    Menu();
 
     return 0;
 }
