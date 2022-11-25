@@ -9,7 +9,7 @@ class Player {
     public:
         Game *game;
         int width, height;
-        float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
+        float x, y, velX, velY, forceX, forceY, velG, forceG;
         float mass;
 
         Player();
@@ -23,7 +23,7 @@ class Player {
 class Bullet {
     public:
         int radius;
-        float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
+        float x, y, velX, velY, forceX, forceY, velG, forceG;
         float mass;
         float angle;
 
@@ -37,7 +37,7 @@ class Bullet {
 class Enemy {
     public:
         int width, height;
-        float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
+        float x, y, velX, velY, forceX, forceY, velG, forceG;
         float mass;
         bool onScreen;
 
