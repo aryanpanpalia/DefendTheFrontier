@@ -115,7 +115,6 @@ void Player::render() {
 
 Bullet::Bullet(float initialX, float initialY, float a) {
     radius = 2;
-    active=true;
     
     x = initialX;
     y = initialY;
@@ -150,8 +149,7 @@ void Bullet::render() {
 Enemy::Enemy(float initialX, float initialY, float a) {
     width = 15;
     height = 15;
-    active = false;
-    activated = false;
+    onScreen = false;
 
     x = initialX;
     y = initialY;
@@ -198,13 +196,11 @@ void Game::render() {
     player.render();
 
     for(Bullet &bullet: bullets) {
-        if(bullet.active) {
-            bullet.render();
-        }
+        bullet.render();
     }
 
     for(Enemy &enemy: enemies) {
-        if(enemy.active) {
+        if(enemy.onScreen) {
             enemy.render();
         }
     }
@@ -220,16 +216,15 @@ void Game::update() {
         // Create alias to bullets[i]
         Bullet &bullet = bullets[i];
 
-        if(bullet.active) {
-            int bRadius = bullet.radius;
-            
-            // Update bullet object
-            bullet.update();
+        int bRadius = bullet.radius;
+        
+        // Update bullet object
+        bullet.update();
 
-            // If the bullet touches the edge, make it inactive
-            if(bullet.x <= bRadius || bullet.x >= WINDOW_WIDTH - bRadius || bullet.y <= bRadius || bullet.y >= WINDOW_HEIGHT - bRadius) {
-                bullet.active = false;
-            }
+        // If the bullet touches the edge, remove it from bullets vector
+        if(bullet.x <= bRadius || bullet.x >= WINDOW_WIDTH - bRadius || bullet.y <= bRadius || bullet.y >= WINDOW_HEIGHT - bRadius) {
+            bullets.erase(bullets.begin() + i, bullets.begin() + i + 1);
+            i--;
         }
     }
 
@@ -237,21 +232,18 @@ void Game::update() {
         // Create alias for enemies[i]
         Enemy &enemy = enemies[i];
 
-        // Only update enemy if it is active or has not been activated yet
-        if(enemy.active || !enemy.activated) {
-            enemy.update();
+        enemy.update();
 
-            // If the enemy is outside the screen and already activated, it should no longer be active
-            // Else if the enemy is inside the screen, if it isn't activated it should be
-            if(enemy.x <= 0 || enemy.x >= WINDOW_WIDTH - enemy.width || enemy.y <= 0 || enemy.y >= WINDOW_HEIGHT - enemy.height) {
-                if(enemy.activated) {
-                    enemy.active = false;
-                }
-            } else {
-                if(!enemy.activated) {
-                    enemy.active = true;
-                    enemy.activated = true;
-                }
+        // If an enemy exits the screen, remove it from the enemies vector
+        // If an enemy enters the screen, set onScreen property to true
+        if(enemy.x <= 0 || enemy.x >= WINDOW_WIDTH - enemy.width || enemy.y <= 0 || enemy.y >= WINDOW_HEIGHT - enemy.height) {
+            if(enemy.onScreen) {
+                enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
+                i--;
+            }
+        } else {
+            if(!enemy.onScreen) {
+                enemy.onScreen = true;
             }
         }
     }

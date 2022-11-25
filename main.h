@@ -26,7 +26,6 @@ class Bullet {
         float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
         float mass;
         float angle;
-        bool active;
 
         Bullet(float initialX, float initialY, float angle);
         int* getCenter();
@@ -40,7 +39,7 @@ class Enemy {
         int width, height;
         float x, y, velX, velY, accelX, accelY, forceX, forceY, velG, forceG;
         float mass;
-        bool active, activated;
+        bool onScreen;
 
         Enemy(float initialX, float initialY, float angle);
         int* getCenter();
