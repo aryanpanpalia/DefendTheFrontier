@@ -104,8 +104,9 @@ void Player::shoot(float angle) {
     forceX += -8.0 * cos(angle);
     forceY += -8.0 * sin(angle);
 
+    // Append Bullet shooting away from player to game object's bullet vector
     int *center = getCenter();
-    game->bullets[game->numBullets++] = Bullet(center[0], center[1], angle);
+    game->bullets.push_back(Bullet(center[0], center[1], angle));
 }
 
 void Player::render() {
@@ -185,32 +186,26 @@ void Enemy::render() {
 
 Game::Game() {
     player.game = this;
-    numBullets = 0;
-    numEnemies = 0;
-    bullets = (Bullet *) malloc(1000 * sizeof(Bullet));
-    enemies = (Enemy *) malloc(1000 * sizeof(Enemy));
-
     lastEnemySpawnTime = TimeNow();
 }
 
 Game::~Game() {
-    free(bullets);
-    free(enemies);
+    // TODO: Figure this out
 }
 
 void Game::render() {
     LCD.Clear();
     player.render();
 
-    for(int i = 0; i < numBullets; i++) {
-        if(bullets[i].active){
-            bullets[i].render();
+    for(Bullet &bullet: bullets) {
+        if(bullet.active) {
+            bullet.render();
         }
     }
 
-    for(int i = 0; i < numEnemies; i++) {
-        if(enemies[i].active) {
-            enemies[i].render();
+    for(Enemy &enemy: enemies) {
+        if(enemy.active) {
+            enemy.render();
         }
     }
 
@@ -221,7 +216,7 @@ void Game::update() {
     // Update player object
     player.update();
 
-    for(int i = 0; i < numBullets; i++) {
+    for(int i = 0; i < bullets.size(); i++) {
         // Create alias to bullets[i]
         Bullet &bullet = bullets[i];
 
@@ -238,7 +233,7 @@ void Game::update() {
         }
     }
 
-    for(int i = 0; i < numEnemies; i++) {
+    for(int i = 0; i < enemies.size(); i++) {
         // Create alias for enemies[i]
         Enemy &enemy = enemies[i];
 
@@ -290,10 +285,10 @@ void Game::update() {
 
         angle = atan2(initialY - player.y, player.x - initialX);
 
-        enemies[numEnemies++] = Enemy(initialX, initialY, angle);
+        // Append new enemy to enemies vector
+        enemies.push_back(Enemy(initialX, initialY, angle));
         lastEnemySpawnTime = TimeNow();
     }
-
 }
 
 bool Game::hasEnded() {

@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <vector>
+
 class Game;
 
 class Player {
@@ -50,9 +52,8 @@ class Enemy {
 class Game {
     public:
         Player player;
-        int numBullets, numEnemies;
-        Bullet *bullets;
-        Enemy *enemies;
+        std::vector<Bullet> bullets;
+        std::vector<Enemy> enemies;
 
         float lastEnemySpawnTime;
 
