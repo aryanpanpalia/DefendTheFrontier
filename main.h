@@ -5,15 +5,30 @@
 
 class Game;
 
+class Vector2D {
+    public:
+        float x, y;
+
+        Vector2D();
+        Vector2D(float a, float b);
+        Vector2D add(Vector2D other);
+        Vector2D sub(Vector2D other);
+        Vector2D mult(float other);
+        Vector2D div(float other);
+        float magnitude();
+        void set(float a, float b);
+        void reset();
+};
+
 class Player {
     public:
         Game *game;
         int width, height;
-        float x, y, velX, velY, forceX, forceY, velG, forceG;
+        Vector2D pos, vel, force, velG, forceG;
         float mass;
 
         Player();
-        int* getCenter();
+        Vector2D getCenter();
         bool pointInPlayer(int px, int py);
         void update();
         void shoot(float angle);
@@ -23,12 +38,12 @@ class Player {
 class Bullet {
     public:
         int radius;
-        float x, y, velX, velY, forceX, forceY, velG, forceG;
+        Vector2D pos, vel, force, vegG, forceG;
         float mass;
         float angle;
 
         Bullet(float initialX, float initialY, float angle);
-        int* getCenter();
+        Vector2D getCenter();
         bool pointInBullet(int px, int py);
         void update();
         void render();
@@ -37,12 +52,12 @@ class Bullet {
 class Enemy {
     public:
         int width, height;
-        float x, y, velX, velY, forceX, forceY, velG, forceG;
+        Vector2D pos, vel, force, velG, forceG;
         float mass;
         bool onScreen;
 
         Enemy(float initialX, float initialY, float angle);
-        int* getCenter();
+        Vector2D getCenter();
         bool pointInEnemy(int px, int py);
         void update();
         void render();  

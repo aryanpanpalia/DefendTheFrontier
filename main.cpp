@@ -16,134 +16,110 @@ Player::Player() {
     width = 20;
     height = 20;
 
-    x = (WINDOW_WIDTH - width) / 2;
-    y = (WINDOW_HEIGHT - height) / 2;
+    pos = Vector2D((WINDOW_WIDTH - width) / 2, (WINDOW_HEIGHT - height) / 2);
+    vel = Vector2D(0, 0);
+    force = Vector2D(0, 0);
 
-    velX = 0;
-    velY = 0;
-    velG = -0.5;
-    forceX = 0;
-    forceY = 0;
-    forceG = -0.5;
+    velG = Vector2D(0, 0.5);
+    forceG = Vector2D(0, 0.5);
 
     mass = 10;
 }
 
-int* Player::getCenter() {
-    int* center = new int[2];
-    center[0] = x + width / 2;
-    center[1] = y + height / 2;
-    return center;
+Vector2D Player::getCenter() {
+    return Vector2D(pos.x + width / 2, pos.y + height / 2);
 }
 
 bool Player::pointInPlayer(int px, int py) {
-    return x <= px && px <= x + width && y <= py && py <= y + height;
+    return pos.x <= px && px <= pos.x + width && pos.y <= py && py <= pos.y + height;
 }
 
 void Player::update() {
-    float dragX = 0;
-    float dragY = 0;
+    Vector2D drag(0, 0);
 
     // If there is a non-zero velocity, calculate a drag force
-    if(velX || velY){
-        float velAngle = atan2(velY, velX);
+    if(vel.x || vel.y){
+        float velAngle = atan2(vel.y, vel.x);
         float dragAngle = -velAngle;
-        dragX = -cos(dragAngle);
-        dragY = sin(dragAngle);
+        drag.set(-cos(dragAngle), sin(dragAngle));
     }
 
     // Calculate net forces
-    float netForceX = forceX + dragX;
-    float netForceY = forceY + dragY;
+    Vector2D netForce = force.add(drag);
     
     // Calculate net acceleration
-    float netAccelX = netForceX / mass;
-    float netAccelY = netForceY / mass;
-    float netAccelG = forceG / mass;
+    Vector2D netAccel = netForce.div(mass);
+    Vector2D netAccelG = forceG.div(mass);
 
-    // Updates x and y position
-    // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
-    x += velX;
-    y -= velY;
-    y -= velG;
+    // Updates position
+    pos = pos.add(vel);
+    pos = pos.add(velG);
     
     // Updates velocity
-    velX += netAccelX;
-    velY += netAccelY;
-    velG += netAccelG;
+    vel = vel.add(netAccel);
+    velG = velG.add(netAccelG);
 
     // Snaps velocities to 0 if it comes close enough
-    float vMagnitude = sqrt(pow(velX, 2) + pow(velY, 2));
-    if(vMagnitude < 0.1) {
-        velX = 0;
-        velY = 0;
+    if(vel.magnitude() < 0.1) {
+        vel.reset();
     }  
 
     // If adding the drag would change the direciton of the force, set the force to 0
     // Else, add the drag to the force
-    if((forceX >= 0 && forceX + dragX <= 0) || (forceX <= 0 && forceX + dragX >= 0)){
-        forceX = 0;
+    if((force.x >= 0 && force.x + drag.x <= 0) || (force.x <= 0 && force.x + drag.x >= 0)){
+        force.x = 0;
     } else {
-        forceX += dragX;
+        force.x += drag.x;
     }
 
-    if((forceY >= 0 && forceY + dragY <= 0) || (forceY <= 0 && forceY + dragY >= 0)){
-        forceY = 0;
+    if((force.y >= 0 && force.y + drag.y <= 0) || (force.y <= 0 && force.y + drag.y >= 0)){
+        force.y = 0;
     } else {
-        forceY += dragY;
+        force.y += drag.y;
     }
 }
 
 void Player::shoot(float angle) {
     // Reset velocities after shooting
-    velG = 0;
-    velX = 0;
-    velY = 0;
+    velG.reset();
+    vel.reset();
 
     // Add a force in the opposite direction of the shot
-    forceX += -8.0 * cos(angle);
-    forceY += -8.0 * sin(angle);
+    Vector2D shotForce(-8.0 * cos(angle), 8.0 * sin(angle));
+    force = force.add(shotForce);
 
     // Append Bullet shooting away from player to game object's bullet vector
-    int *center = getCenter();
-    game->bullets.push_back(Bullet(center[0], center[1], angle));
+    Vector2D center = getCenter();
+    game->bullets.push_back(Bullet(center.x, center.y, angle));
 }
 
 void Player::render() {
-    LCD.FillRectangle(x, y, width, height);
+    LCD.FillRectangle(pos.x, pos.y, width, height);
 }
 
 Bullet::Bullet(float initialX, float initialY, float a) {
     radius = 2;
     
-    x = initialX;
-    y = initialY;
+    pos = Vector2D(initialX, initialY);
+    vel = Vector2D(cos(a), -sin(a));
     angle = a;
-    
-    velX = cos(a);
-    velY = sin(a);
 }
 
-int* Bullet::getCenter() {
-    int* center = new int[2];
-    center[0] = x;
-    center[1] = y;
-    return center;
+Vector2D Bullet::getCenter() {
+    return pos;
 }
 
 bool Bullet::pointInBullet(int px, int py) {
-    return sqrt(pow(px - x, 2) + pow(py - y, 2)) <= radius;
+    return sqrt(pow(px - pos.x, 2) + pow(py - pos.y, 2)) <= radius;
 }
 
 void Bullet::update() {
     // Updates x and y position
-    // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
-    x += velX;
-    y -= velY;
+    pos = pos.add(vel);
 }
 
 void Bullet::render() {
-    LCD.FillCircle(x, y, 2);
+    LCD.FillCircle(pos.x, pos.y, 2);
 }
 
 Enemy::Enemy(float initialX, float initialY, float a) {
@@ -151,34 +127,27 @@ Enemy::Enemy(float initialX, float initialY, float a) {
     height = 15;
     onScreen = false;
 
-    x = initialX;
-    y = initialY;
-
-    velX = cos(a);
-    velY = sin(a);
+    pos = Vector2D(initialX, initialY);
+    vel = Vector2D(cos(a), -sin(a));
 }
 
-int* Enemy::getCenter() {
-    int* center = new int[2];
-    center[0] = x + width / 2;
-    center[1] = y + height / 2;
+Vector2D Enemy::getCenter() {
+    Vector2D center(pos.x + width / 2, pos.y + height / 2);
     return center;
 }
 
 bool Enemy::pointInEnemy(int px, int py) {
-    return x <= px && px <= x + width && y <= py && py <= y + height;
+    return pos.x <= px && px <= pos.x + width && pos.y <= py && py <= pos.y + height;
 }
 
 void Enemy::update() {
     // Updates x and y position
-    // y is inverted as a positive y force, which moves the player up, reduces the value of y on the screen
-    x += velX;
-    y -= velY;
+    pos = pos.add(vel);
 }
 
 void Enemy::render() {
     LCD.SetFontColor(RED);
-    LCD.FillRectangle(x, y, width, height);
+    LCD.FillRectangle(pos.x, pos.y, width, height);
     LCD.SetFontColor(WHITE);
 }
 
@@ -222,7 +191,7 @@ void Game::update() {
         bullet.update();
 
         // If the bullet touches the edge, remove it from bullets vector
-        if(bullet.x <= bRadius || bullet.x >= WINDOW_WIDTH - bRadius || bullet.y <= bRadius || bullet.y >= WINDOW_HEIGHT - bRadius) {
+        if(bullet.pos.x <= bRadius || bullet.pos.x >= WINDOW_WIDTH - bRadius || bullet.pos.y <= bRadius || bullet.pos.y >= WINDOW_HEIGHT - bRadius) {
             bullets.erase(bullets.begin() + i, bullets.begin() + i + 1);
             i--;
         }
@@ -236,7 +205,7 @@ void Game::update() {
 
         // If an enemy exits the screen, remove it from the enemies vector
         // If an enemy enters the screen, set onScreen property to true
-        if(enemy.x <= 0 || enemy.x >= WINDOW_WIDTH - enemy.width || enemy.y <= 0 || enemy.y >= WINDOW_HEIGHT - enemy.height) {
+        if(enemy.pos.x <= 0 || enemy.pos.x >= WINDOW_WIDTH - enemy.width || enemy.pos.y <= 0 || enemy.pos.y >= WINDOW_HEIGHT - enemy.height) {
             if(enemy.onScreen) {
                 enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
                 i--;
@@ -275,7 +244,7 @@ void Game::update() {
                 break;
         }
 
-        angle = atan2(initialY - player.y, player.x - initialX);
+        angle = atan2(initialY - player.pos.y, player.pos.x - initialX);
 
         // Append new enemy to enemies vector
         enemies.push_back(Enemy(initialX, initialY, angle));
@@ -284,7 +253,47 @@ void Game::update() {
 }
 
 bool Game::hasEnded() {
-    return player.x <= 0 || player.x >= WINDOW_WIDTH - player.width || player.y <= 0 || player.y >= WINDOW_HEIGHT - player.height;
+    return player.pos.x <= 0 || player.pos.x >= WINDOW_WIDTH - player.width || player.pos.y <= 0 || player.pos.y >= WINDOW_HEIGHT - player.height;
+}
+
+Vector2D::Vector2D() {
+    x = 0;
+    y = 0;
+}
+
+Vector2D::Vector2D(float a, float b) {
+    x = a;
+    y = b;
+}
+
+Vector2D Vector2D::add(Vector2D other) {
+    return Vector2D(x + other.x, y + other.y);
+}
+
+Vector2D Vector2D::sub(Vector2D other) {
+    return Vector2D(x - other.x, y - other.y);
+}
+
+Vector2D Vector2D::mult(float other) {
+    return Vector2D(x * other, y * other);
+}
+
+Vector2D Vector2D::div(float other) {
+    return Vector2D(x / other, y / other);
+}
+
+float Vector2D::magnitude() {
+    return sqrt(pow(x, 2) + pow(y, 2));
+}
+
+void Vector2D::set(float a, float b) {
+    x = a;
+    y = b;
+}
+
+void Vector2D::reset() {
+    x = 0;
+    y = 0;
 }
 
 void Play(){
@@ -309,9 +318,9 @@ void Play(){
         if(LCD.Touch(&x, &y) && !pressed) {
             pressed = true;
             if(!player.pointInPlayer(x, y)){
-                int* center = player.getCenter();
-                float dx = x - center[0];
-                float dy = center[1] - y;
+                Vector2D center = player.getCenter();
+                float dx = x - center.x;
+                float dy = center.y - y;
                 float angle = atan2(dy, dx);
                 
                 player.shoot(angle);
