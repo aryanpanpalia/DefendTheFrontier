@@ -17,6 +17,6 @@ class Game {
         Game();
         void render();
         void update();
-        bool hasEnded();
+        void playerOutOfBounds();
         void handleCollisions();
 };

@@ -17,6 +17,7 @@ Game::Game() {
 
 void Game::render() {
     LCD.Clear();
+
     player.render();
 
     for(Bullet &bullet: bullets) {
@@ -169,6 +170,21 @@ void Game::handleCollisions() {
     }
 }
 
-bool Game::hasEnded() {
-    return gameOver || player.pos.x <= 0 || player.pos.x >= WINDOW_WIDTH - player.width || player.pos.y <= 0 || player.pos.y >= WINDOW_HEIGHT - player.height;
+void Game::playerOutOfBounds() {
+    if (player.pos.x <= 0) {
+        player.pos.x = 0;
+        gameOver = true;
+    }
+    if (player.pos.x >= WINDOW_WIDTH - player.width) {
+        player.pos.x = WINDOW_WIDTH - player.width;
+        gameOver = true;
+    }
+    if (player.pos.y <= 0) {
+        player.pos.y = 0;
+        gameOver = true;
+    }
+    if (player.pos.y >= WINDOW_HEIGHT - player.height) {
+        player.pos.y = WINDOW_HEIGHT - player.height;
+        gameOver = true;
+    }
 }

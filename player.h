@@ -10,7 +10,6 @@ class Player {
         int width, height;
         Vector2D pos, vel, force, velG, forceG;
         float mass;
-
         int ammo;
 
         Player();

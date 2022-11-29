@@ -31,7 +31,7 @@ void Play(){
     game.render();
 
     // Keep running the game loop if the game has not ended
-    while(!game.hasEnded()){
+    while(!game.gameOver){
         // On click
         if(LCD.Touch(&x, &y) && !pressed) {
             pressed = true;
@@ -52,11 +52,15 @@ void Play(){
         // Update game
         game.update();
 
+        // Handle player out of bounds
+        game.playerOutOfBounds();
+
         // Render game
         game.render();
 
         // Handle collisions
         game.handleCollisions();
+        
     }
 }
 
