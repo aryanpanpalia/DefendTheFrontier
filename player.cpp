@@ -19,6 +19,8 @@ Player::Player() {
     forceG = Vector2D(0, 0.5);
 
     mass = 10;
+
+    ammo = 10;
 }
 
 Vector2D Player::getCenter() {
@@ -75,17 +77,23 @@ void Player::update() {
 }
 
 void Player::shoot(float angle) {
-    // Reset velocities after shooting
-    velG.reset();
-    vel.reset();
+    // if player has ammo
+    if (ammo > 0) {
+        // Reset velocities after shooting
+        velG.reset();
+        vel.reset();
 
-    // Add a force in the opposite direction of the shot
-    Vector2D shotForce(-8.0 * cos(angle), 8.0 * sin(angle));
-    force = force.add(shotForce);
+        // Add a force in the opposite direction of the shot
+        Vector2D shotForce(-8.0 * cos(angle), 8.0 * sin(angle));
+        force = force.add(shotForce);
 
-    // Append Bullet shooting away from player to game object's bullet vector
-    Vector2D center = getCenter();
-    game->bullets.push_back(Bullet(center.x, center.y, angle));
+        // Append Bullet shooting away from player to game object's bullet vector
+        Vector2D center = getCenter();
+        game->bullets.push_back(Bullet(center.x, center.y, angle));
+
+        // decrement ammo
+        ammo--;
+    }
 }
 
 void Player::render() {

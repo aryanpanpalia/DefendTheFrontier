@@ -29,6 +29,9 @@ void Game::render() {
         }
     }
 
+    LCD.WriteAt("Ammo: ", 0 , 0);
+    LCD.WriteAt(player.ammo, 60, 0);
+
     LCD.Update();
 }
 
@@ -156,8 +159,10 @@ void Game::handleCollisions() {
                     j--;
                     enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
                     i--;
-                    // updates number of enemies killed
+                    // update number of enemies killed
                     numEnemiesKilled++;
+                    // give player 2 ammo
+                    player.ammo += 2;
                 }
             }
         }

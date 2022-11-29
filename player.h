@@ -11,6 +11,8 @@ class Player {
         Vector2D pos, vel, force, velG, forceG;
         float mass;
 
+        int ammo;
+
         Player();
         Vector2D getCenter();
         bool pointInPlayer(int px, int py);
