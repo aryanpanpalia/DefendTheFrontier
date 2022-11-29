@@ -12,9 +12,9 @@
 using namespace std;
 using namespace FEHIcon;
 
-/*****************************************************************************/
-//  CLASS FUNCTIONS: PLAYER, BULLET, ENEMY  //
-/*****************************************************************************/
+/*
+    Player Class Methods
+*/
 
 Player::Player() {
     width = 20;
@@ -101,6 +101,10 @@ void Player::render() {
     LCD.FillRectangle(pos.x, pos.y, width, height);
 }
 
+/*
+    Bullet Class Methods
+*/
+
 Bullet::Bullet(float initialX, float initialY, float a) {
     radius = 2;
     
@@ -125,6 +129,10 @@ void Bullet::update() {
 void Bullet::render() {
     LCD.FillCircle(pos.x, pos.y, radius);
 }
+
+/*
+    Enemy Class Methods
+*/
 
 Enemy::Enemy(float initialX, float initialY, float a) {
     width = 15;
@@ -155,9 +163,9 @@ void Enemy::render() {
     LCD.SetFontColor(WHITE);
 }
 
-/*****************************************************************************/
-//  CLASS FUNCTIONS: GAME  //
-/*****************************************************************************/
+/*
+    Game Class Methods
+*/
 
 Game::Game() {
     player.game = this;
@@ -323,9 +331,9 @@ bool Game::hasEnded() {
     return gameOver || player.pos.x <= 0 || player.pos.x >= WINDOW_WIDTH - player.width || player.pos.y <= 0 || player.pos.y >= WINDOW_HEIGHT - player.height;
 }
 
-/*****************************************************************************/
-//  CLASS FUNCTIONS: VECTOR  //
-/*****************************************************************************/
+/*
+    Vector Class Methods
+*/
 
 Vector2D::Vector2D() {
     x = 0;
@@ -367,9 +375,9 @@ void Vector2D::reset() {
     y = 0;
 }
 
-/*****************************************************************************/
-//  PLAY GAME  //
-/*****************************************************************************/
+/*
+    Play Game Function
+*/
 
 void Play(){
     // Stores whether the screen is being pressed
@@ -389,7 +397,6 @@ void Play(){
 
     // Keep running the game loop if the game has not ended
     while(!game.hasEnded()){
-
         // On click
         if(LCD.Touch(&x, &y) && !pressed) {
             pressed = true;
@@ -418,9 +425,9 @@ void Play(){
     }
 }
 
-/*****************************************************************************/
-//  MENU  //
-/*****************************************************************************/
+/*
+    Menu Functions
+*/
 
 void Statistics() {
     Icon backButton;
