@@ -12,6 +12,10 @@
 using namespace std;
 using namespace FEHIcon;
 
+/*****************************************************************************/
+//  CLASS FUNCTIONS: PLAYER, BULLET, ENEMY  //
+/*****************************************************************************/
+
 Player::Player() {
     width = 20;
     height = 20;
@@ -119,7 +123,7 @@ void Bullet::update() {
 }
 
 void Bullet::render() {
-    LCD.FillCircle(pos.x, pos.y, 2);
+    LCD.FillCircle(pos.x, pos.y, radius);
 }
 
 Enemy::Enemy(float initialX, float initialY, float a) {
@@ -151,9 +155,15 @@ void Enemy::render() {
     LCD.SetFontColor(WHITE);
 }
 
+/*****************************************************************************/
+//  CLASS FUNCTIONS: GAME  //
+/*****************************************************************************/
+
 Game::Game() {
     player.game = this;
     lastEnemySpawnTime = TimeNow();
+    gameOver = false;
+    numEnemiesKilled = 0;
 }
 
 Game::~Game() {
@@ -252,9 +262,70 @@ void Game::update() {
     }
 }
 
-bool Game::hasEnded() {
-    return player.pos.x <= 0 || player.pos.x >= WINDOW_WIDTH - player.width || player.pos.y <= 0 || player.pos.y >= WINDOW_HEIGHT - player.height;
+void Game::handleCollisions() {
+    // initialize variables to store player attributes
+    Vector2D playerCenter = player.getCenter();
+    float halfPlayerHeight = player.height / 2.0;
+    float halfPlayerWidth = player.width / 2.0;
+    
+    // calculate radius of circle circumscribing player square
+    float playerRadius = sqrt(halfPlayerHeight*halfPlayerHeight + halfPlayerWidth*halfPlayerWidth);
+
+    // for each enemy
+    for (int i = 0; i < enemies.size(); i++) {
+        // initialize variables with enemy attributes
+        Vector2D enemyPosition = enemies[i].getCenter();
+        float halfEnemyHeight = enemies[i].height/2.0; 
+        float halfEnemyWidth = enemies[i].width/2.0;
+        
+        // calculate radius of circle circumscribing enemy square
+        float enemyRadius = sqrt(pow(halfEnemyHeight, 2) + pow(halfEnemyWidth, 2));
+
+        // if player and enemy objects are within their radii
+        if (playerCenter.sub(enemyPosition).magnitude() < playerRadius+enemyRadius) {
+            // if player and enemy objects intersect
+            if (playerCenter.y-halfPlayerHeight < enemyPosition.y+halfEnemyHeight && 
+                    playerCenter.y+halfPlayerHeight > enemyPosition.y-halfEnemyHeight && 
+                    playerCenter.x-halfPlayerWidth < enemyPosition.x+halfEnemyWidth && 
+                    playerCenter.x+halfPlayerWidth > enemyPosition.x-halfEnemyWidth) {
+                // end game
+                gameOver = true;
+            }
+        }
+
+        // for each bullet
+        for (int j = 0; j < bullets.size(); j++) {
+            // initialize variables with bullet attributes
+            Vector2D bulletPosition = bullets[j].getCenter();
+            float bulletRadius = bullets[j].radius;
+
+            // if enemy and bullet objects are within their radii
+            if (enemyPosition.sub(bulletPosition).magnitude() < enemyRadius+bulletRadius) {
+                // if enemy and bullet objects intersect
+                if (bulletPosition.y-bulletRadius < enemyPosition.y+halfEnemyHeight && 
+                        bulletPosition.y+bulletRadius > enemyPosition.y-halfEnemyHeight && 
+                        bulletPosition.x-bulletRadius < enemyPosition.x+halfEnemyWidth && 
+                        bulletPosition.x+bulletRadius > enemyPosition.x-halfEnemyWidth) {
+                    // remove bullet and enemy
+                    bullets.erase(bullets.begin() + j, bullets.begin() + j + 1);
+                    j--;
+                    enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
+                    i--;
+                    // updates number of enemies killed
+                    numEnemiesKilled++;
+                }
+            }
+        }
+    }
 }
+
+bool Game::hasEnded() {
+    return gameOver || player.pos.x <= 0 || player.pos.x >= WINDOW_WIDTH - player.width || player.pos.y <= 0 || player.pos.y >= WINDOW_HEIGHT - player.height;
+}
+
+/*****************************************************************************/
+//  CLASS FUNCTIONS: VECTOR  //
+/*****************************************************************************/
 
 Vector2D::Vector2D() {
     x = 0;
@@ -296,6 +367,10 @@ void Vector2D::reset() {
     y = 0;
 }
 
+/*****************************************************************************/
+//  PLAY GAME  //
+/*****************************************************************************/
+
 void Play(){
     // Stores whether the screen is being pressed
     bool pressed = false;
@@ -309,10 +384,11 @@ void Play(){
     // Alias/Reference to game's player object
     Player &player = game.player;
 
+    // Render game
+    game.render();
+
     // Keep running the game loop if the game has not ended
     while(!game.hasEnded()){
-        // Render game
-        game.render();
 
         // On click
         if(LCD.Touch(&x, &y) && !pressed) {
@@ -333,8 +409,18 @@ void Play(){
 
         // Update game
         game.update();
+
+        // Render game
+        game.render();
+
+        // Handle collisions
+        game.handleCollisions();
     }
 }
+
+/*****************************************************************************/
+//  MENU  //
+/*****************************************************************************/
 
 void Statistics() {
     Icon backButton;

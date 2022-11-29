@@ -38,7 +38,7 @@ class Player {
 class Bullet {
     public:
         int radius;
-        Vector2D pos, vel, force, vegG, forceG;
+        Vector2D pos, vel, force, velG, forceG;
         float mass;
         float angle;
 
@@ -68,14 +68,16 @@ class Game {
         Player player;
         std::vector<Bullet> bullets;
         std::vector<Enemy> enemies;
-
         float lastEnemySpawnTime;
+        bool gameOver;
+        int numEnemiesKilled;
 
         Game();
         ~Game();
         void render();
         void update();
         bool hasEnded();
+        void handleCollisions();
 };
 
 #endif
