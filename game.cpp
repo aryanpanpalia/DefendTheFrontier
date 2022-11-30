@@ -1,5 +1,6 @@
 #include "game.h"
 #include "player.h"
+#include "bullet.h"
 #include "FEHLCD.h"
 #include "FEHUtility.h"
 #include <math.h>
@@ -29,6 +30,10 @@ void Game::render() {
         if(enemy.onScreen) {
             enemy.render();
         }
+    }
+
+    for(TrackerBullet &trackerBullet: trackerBullets) {
+        trackerBullet.render();
     }
 
     LCD.WriteAt("Ammo: ", 0 , 0);
@@ -77,7 +82,24 @@ void Game::update() {
         } else {
             if(!enemy.onScreen) {
                 enemy.onScreen = true;
+                enemies[rand() % enemies.size()].shoot();
             }
+        }
+    }
+
+    for(int i = 0; i < trackerBullets.size(); i++) {
+        // Create alias to trackerBullets[i]
+        TrackerBullet &trackerBullet = trackerBullets[i];
+
+        int bRadius = trackerBullet.radius;
+        
+        // Update trackerBullet object
+        trackerBullet.update();
+
+        // If the trackerBullet touches the edge, remove it from trackerBullets vector
+        if(trackerBullet.pos.x <= bRadius || trackerBullet.pos.x >= WINDOW_WIDTH - bRadius || trackerBullet.pos.y <= bRadius || trackerBullet.pos.y >= WINDOW_HEIGHT - bRadius) {
+            trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
+            i--;
         }
     }
 
@@ -111,7 +133,7 @@ void Game::update() {
         angle = atan2(initialY - player.pos.y, player.pos.x - initialX);
 
         // Append new enemy to enemies vector
-        enemies.push_back(Enemy(initialX, initialY, angle));
+        enemies.push_back(Enemy(initialX, initialY, angle, this));
         lastEnemySpawnTime = TimeNow();
     }
 }
@@ -169,6 +191,27 @@ void Game::handleCollisions() {
                     numEnemiesKilled++;
                     // give player 2 ammo
                     player.ammo += 2;
+                }
+            }
+        }
+
+        // for each tracker bullet
+        for (int i = 0; i < trackerBullets.size(); i++) {
+            // initialize variables with bullet attributes
+            Vector2D bulletPosition = trackerBullets[i].getCenter();
+            float bulletRadius = trackerBullets[i].radius;
+
+            // if player and tracker bullet objects are within their radii
+            if (playerCenter.sub(bulletPosition).magnitude() < playerRadius+bulletRadius) {
+                // if player and tracker bullet objects intersect
+                if (bulletPosition.y-bulletRadius < playerCenter.y+halfPlayerHeight && 
+                        bulletPosition.y+bulletRadius > playerCenter.y-halfPlayerHeight && 
+                        bulletPosition.x-bulletRadius < playerCenter.x+halfPlayerWidth && 
+                        bulletPosition.x+bulletRadius > playerCenter.x-halfPlayerWidth) {
+
+                        player.vel = player.vel.add(trackerBullets[i].vel);
+                        trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
+                        i--;
                 }
             }
         }

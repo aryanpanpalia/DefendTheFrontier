@@ -1,8 +1,11 @@
 #include "enemy.h"
+#include "game.h"
 #include "FEHLCD.h"
 #include <math.h>
 
-Enemy::Enemy(float initialX, float initialY, float a) {
+Enemy::Enemy(float initialX, float initialY, float a, Game *g) {
+    game = g;
+
     width = 15;
     height = 15;
     onScreen = false;
@@ -29,4 +32,9 @@ void Enemy::render() {
     LCD.SetFontColor(RED);
     LCD.FillRectangle(pos.x, pos.y, width, height);
     LCD.SetFontColor(WHITE);
+}
+
+void Enemy::shoot() {
+    Vector2D center = getCenter();
+    game->trackerBullets.push_back(TrackerBullet(center.x, center.y, &game->player));
 }

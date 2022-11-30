@@ -9,6 +9,7 @@ class Game {
     public:
         Player player;
         std::vector<Bullet> bullets;
+        std::vector<TrackerBullet> trackerBullets;
         std::vector<Enemy> enemies;
         float lastEnemySpawnTime;
         bool gameOver;

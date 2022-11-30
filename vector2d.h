@@ -11,6 +11,7 @@ class Vector2D {
         Vector2D mult(float other);
         Vector2D div(float other);
         float magnitude();
+        Vector2D norm();
         void set(float a, float b);
         void reset();
 };

@@ -1,6 +1,9 @@
 #include "bullet.h"
+#include "player.h"
 #include "FEHLCD.h"
 #include <math.h>
+
+Bullet::Bullet(){}
 
 Bullet::Bullet(float initialX, float initialY, float a) {
     radius = 2;
@@ -25,4 +28,26 @@ void Bullet::update() {
 
 void Bullet::render() {
     LCD.FillCircle(pos.x, pos.y, radius);
+}
+
+TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p){
+    radius = 2;
+    mass = 10;
+
+    player = p;
+
+    pos = Vector2D(initialX, initialY);
+    vel = player->pos.sub(pos).norm();
+}
+
+void TrackerBullet::update() {
+    Vector2D force = player->pos.sub(pos).norm();
+    vel = vel.add(force.div(mass));
+    pos = pos.add(vel);
+}
+
+void TrackerBullet::render() {
+    LCD.SetFontColor(ORANGERED);
+    LCD.DrawCircle(pos.x, pos.y, radius);
+    LCD.SetFontColor(WHITE);
 }

@@ -31,6 +31,10 @@ float Vector2D::magnitude() {
     return sqrt(pow(x, 2) + pow(y, 2));
 }
 
+Vector2D Vector2D::norm() {
+    return div(magnitude());
+}
+
 void Vector2D::set(float a, float b) {
     x = a;
     y = b;
