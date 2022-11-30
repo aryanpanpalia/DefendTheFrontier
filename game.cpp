@@ -33,6 +33,10 @@ void Game::render() {
     LCD.WriteAt("Ammo: ", 0 , 0);
     LCD.WriteAt(player.ammo, 60, 0);
 
+    int score = numEnemiesKilled * 10;
+    LCD.WriteAt("Score: ", 200, 0);
+    LCD.WriteAt(score, 284, 0);
+
     LCD.Update();
 }
 
