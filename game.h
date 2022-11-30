@@ -13,8 +13,9 @@ class Game {
         float lastEnemySpawnTime;
         bool gameOver;
         int numEnemiesKilled;
+        int difficulty;
 
-        Game();
+        Game(int diff);
         void render();
         void update();
         void playerOutOfBounds();

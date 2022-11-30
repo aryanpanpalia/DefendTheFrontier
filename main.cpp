@@ -14,7 +14,80 @@ using namespace FEHIcon;
     Play Game Function
 */
 
+int SelectDifficulty() {
+    // Create buttons
+    Icon easyButton, mediumButton, hardButton, extremeButton;
+    char easyString[] = "Easy";
+    char mediumString[] = "Medium";
+    char hardString[] = "Hard";
+    char extremeString[] = "Extreme";
+
+    // Setting button width, height, and buffer between them as constants
+    int buttonWidth = 100;
+    int buttonHeight = 100;
+    int buffer = 10;
+
+    // Initial XY positions of the buttons   
+    int easyStartX = (WINDOW_WIDTH - (buttonWidth * 2 + buffer)) / 2;
+    int easyStartY = (WINDOW_HEIGHT - (buttonHeight * 2 + buffer)) / 2;
+
+    int mediumStartX = easyStartX + buttonWidth + buffer;
+    int mediumStartY = easyStartY;
+
+    int hardStartX = easyStartX;
+    int hardStartY = easyStartY + buttonHeight + buffer;
+
+    int extremeStartX = easyStartX + buttonWidth + buffer;
+    int extremeStartY = easyStartY + buttonHeight + buffer;
+
+    easyButton.SetProperties(easyString, easyStartX, easyStartY, buttonWidth, buttonHeight, GREEN, WHITE);
+    mediumButton.SetProperties(mediumString, mediumStartX, mediumStartY, buttonWidth, buttonHeight, YELLOW, WHITE);
+    hardButton.SetProperties(hardString, hardStartX, hardStartY, buttonWidth, buttonHeight, ORANGE, WHITE);
+    extremeButton.SetProperties(extremeString, extremeStartX, extremeStartY, buttonWidth, buttonHeight, RED, WHITE);
+
+    float x, y;
+    while(true) {
+        // Clears the screen then draws all the buttons
+        LCD.Clear();
+
+        LCD.SetFontColor(GREEN);
+        LCD.FillRectangle(easyStartX, easyStartY, buttonWidth, buttonHeight);
+        easyButton.Draw();
+
+        LCD.SetFontColor(YELLOW);
+        LCD.FillRectangle(mediumStartX, mediumStartY, buttonWidth, buttonHeight);
+        mediumButton.Draw();
+
+        LCD.SetFontColor(ORANGE);
+        LCD.FillRectangle(hardStartX, hardStartY, buttonWidth, buttonHeight);
+        hardButton.Draw();
+
+        LCD.SetFontColor(RED);
+        LCD.FillRectangle(extremeStartX, extremeStartY, buttonWidth, buttonHeight);
+        extremeButton.Draw();
+
+        // Waits for someone to touch the screen
+        while(!LCD.Touch(&x, &y));
+
+        // Waits for someone to release their touch
+        while(LCD.Touch(&x, &y));
+
+        if(easyStartX < x && x < easyStartX + buttonWidth && easyStartY < y && y < easyStartY + buttonHeight) {
+            return 0;
+        } else if(mediumStartX < x && x < mediumStartX + buttonWidth && mediumStartY < y && y < mediumStartY + buttonHeight) {
+            return 1;
+        } else if(hardStartX < x && x < hardStartX + buttonWidth && hardStartY < y && y < hardStartY + buttonHeight) {
+            return 2;
+        } else if(extremeStartX < x && x < extremeStartX + buttonWidth && extremeStartY < y && y < extremeStartY + buttonHeight) {
+            return 3;
+        }
+    }
+}
+
 void Play(){
+    // Prompt for difficulty level
+    int difficulty = SelectDifficulty();
+
     // Stores whether the screen is being pressed
     bool pressed = false;
 
@@ -22,7 +95,7 @@ void Play(){
     float x, y;
 
     // Game object
-    Game game;
+    Game game(difficulty);
 
     // Alias/Reference to game's player object
     Player &player = game.player;

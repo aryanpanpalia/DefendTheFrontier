@@ -8,11 +8,12 @@
 #define WINDOW_HEIGHT 240
 #define PI 3.1415
 
-Game::Game() {
+Game::Game(int diff) {
     player.game = this;
     lastEnemySpawnTime = TimeNow();
     gameOver = false;
     numEnemiesKilled = 0;
+    difficulty = diff;
 }
 
 void Game::render() {
