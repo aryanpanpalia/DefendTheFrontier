@@ -54,13 +54,15 @@ void Game::update() {
         // Create alias to bullets[i]
         Bullet &bullet = bullets[i];
 
-        int bRadius = bullet.radius;
+        // int bRadius = bullet.radius;
+        int bWidth = bullet.width;
+        int bHeight = bullet.height;
         
         // Update bullet object
         bullet.update();
 
         // If the bullet touches the edge, remove it from bullets vector
-        if(bullet.pos.x <= bRadius || bullet.pos.x >= WINDOW_WIDTH - bRadius || bullet.pos.y <= bRadius || bullet.pos.y >= WINDOW_HEIGHT - bRadius) {
+        if(bullet.pos.x <= 0 || bullet.pos.x >= WINDOW_WIDTH - bWidth || bullet.pos.y <= 0 || bullet.pos.y >= WINDOW_HEIGHT - bHeight) {
             bullets.erase(bullets.begin() + i, bullets.begin() + i + 1);
             i--;
         }
@@ -154,31 +156,31 @@ void Game::handleCollisions() {
             }
         }
 
-        // initialize variables with enemy attributes
-        Vector2D enemyPosition = enemies[i].getCenter();
-        float halfEnemyHeight = enemies[i].height/2.0; 
-        float halfEnemyWidth = enemies[i].width/2.0;
-        
         // for each bullet
-        for (int j = 0; j < bullets.size(); j++) {
-            // initialize variables with bullet attributes
-            Vector2D bulletPosition = bullets[j].getCenter();
-            float bulletRadius = bullets[j].radius;
+        for(int j = 0; j < bullets.size(); j++) {
+            Bullet &bullet = bullets[j];
+            int *bulletImageArray = bullet.bulletImage.saved_image;
 
-            // if enemy and bullet objects intersect
-            if (bulletPosition.y-bulletRadius < enemyPosition.y+halfEnemyHeight && 
-                    bulletPosition.y+bulletRadius > enemyPosition.y-halfEnemyHeight && 
-                    bulletPosition.x-bulletRadius < enemyPosition.x+halfEnemyWidth && 
-                    bulletPosition.x+bulletRadius > enemyPosition.x-halfEnemyWidth) {
-                // remove bullet and enemy
-                bullets.erase(bullets.begin() + j, bullets.begin() + j + 1);
-                j--;
-                enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
-                i--;
-                // update number of enemies killed
-                numEnemiesKilled++;
-                // give player 2 ammo
-                player.ammo += 2;
+            for(int row = 0; row < bullet.height; row++) {
+                for(int col = 0; col < bullet.width; col++){
+                    int x = bullet.pos.x + col;
+                    int y = bullet.pos.y + row;
+
+                        if(enemies[i].pointInEnemy(x, y) && bulletImageArray[row * bullet.height + col] != -1) {
+                        // remove bullet and enemy
+                        bullets.erase(bullets.begin() + j, bullets.begin() + j + 1);
+                        j--;
+
+                        enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
+                        i--;
+
+                        // update number of enemies killed
+                        numEnemiesKilled++;
+
+                        // give player 2 ammo
+                        player.ammo += 2;
+                    }
+                }
             }
         }
     }

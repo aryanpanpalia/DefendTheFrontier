@@ -13,6 +13,7 @@ class Image
 		Image();
 		void Open(const char *);
 		void Draw(int, int);
+		void Rotate180();
 		void Close();
 
 };

@@ -63,6 +63,22 @@ void Image::Draw(int x, int y)
 	}
 }
 
+void Image::Rotate180() {
+	int *newImage = (int*)malloc(sizeof(int) * rows * cols);
+
+	for (int oldRow = 0; oldRow < rows; oldRow++)
+	{
+		for (int oldCol = 0; oldCol < cols; oldCol++)
+		{
+			int newRow = rows - oldRow - 1;
+			int newCol = cols - oldCol - 1;
+			newImage[newRow * cols + newCol] = saved_image[oldRow * cols + oldCol];
+		}
+	}
+
+	saved_image = newImage;
+}
+
 //prevent memory leak issues after malloc
 void Image::Close()
 {

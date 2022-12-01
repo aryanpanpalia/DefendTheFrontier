@@ -3,14 +3,31 @@
 #include "FEHLCD.h"
 #include <math.h>
 
+#define PI 3.1415
+
 Bullet::Bullet(){}
 
 Bullet::Bullet(float initialX, float initialY, float a) {
-    radius = 2;
-    
     pos = Vector2D(initialX, initialY);
-    vel = Vector2D(cos(a), -sin(a));
+    vel = Vector2D(3 * cos(a), -3 * sin(a));
     angle = a;
+
+    char buf[50];
+    int angleInDegrees = (180 * angle) / PI;
+    int imageAngle = ((int) angleInDegrees / 10) * 10;
+
+    if(imageAngle > 0) {
+        snprintf(buf, 50, "bulletImages/Bullet%d.pic", imageAngle);
+        bulletImage.Open(buf);
+    } else {
+        imageAngle += 180;
+        snprintf(buf, 50, "bulletImages/Bullet%d.pic", imageAngle);
+        bulletImage.Open(buf);
+        bulletImage.Rotate180();
+    }
+
+    width = bulletImage.cols;
+    height = bulletImage.rows; 
 }
 
 Vector2D Bullet::getCenter() {
@@ -18,7 +35,7 @@ Vector2D Bullet::getCenter() {
 }
 
 bool Bullet::pointInBullet(int px, int py) {
-    return sqrt(pow(px - pos.x, 2) + pow(py - pos.y, 2)) <= radius;
+    return pos.x <= px && px <= pos.x + width && pos.y <= py && py <= pos.y + height;
 }
 
 void Bullet::update() {
@@ -27,7 +44,8 @@ void Bullet::update() {
 }
 
 void Bullet::render() {
-    LCD.FillCircle(pos.x, pos.y, radius);
+    bulletImage.Draw(pos.x, pos.y);
+    LCD.SetFontColor(WHITE);
 }
 
 TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p){
@@ -38,6 +56,10 @@ TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p){
 
     pos = Vector2D(initialX, initialY);
     vel = player->pos.sub(pos).norm();
+}
+
+bool TrackerBullet::pointInBullet(int px, int py) {
+    return sqrt(pow(px - pos.x, 2) + pow(py - pos.y, 2)) <= radius;
 }
 
 void TrackerBullet::update() {
