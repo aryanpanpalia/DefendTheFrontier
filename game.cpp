@@ -143,65 +143,110 @@ void Game::update() {
     }
 }
 
-void Game::handleCollisions() {    
-    // for each enemy
+void Game::handleCollisions() {
+    // Stores player's image array
+    int *playerImageArray = player.playerImage.saved_image;
+    
     for (int i = 0; i < enemies.size(); i++) {
-        int *playerImageArray = player.playerImage.saved_image;
-        for(int row = 0; row < player.height && !gameOver; row++) {
-            for(int col = 0; col < player.width; col++){
-                int x = player.pos.x + col;
-                int y = player.pos.y + row;
+        Enemy &enemy = enemies[i];
+        int *enemyImageArray = enemies[i].enemyImage.saved_image;
 
-                if(enemies[i].pointInEnemy(x, y) && playerImageArray[row * player.height + col] != -1) {
-                    gameOver = true;
-                    break;
+        /*
+            Enemy - Player Collisions
+        */
+
+        // Go through the rows and columns of player object
+        for(int playerRow = 0; playerRow < player.height && !gameOver; playerRow++) {
+            for(int playerCol = 0; playerCol < player.width; playerCol++){
+                // Find corresponding (x, y) position on the screen for the playerRow and playerCol
+                int x = player.pos.x + playerCol;
+                int y = player.pos.y + playerRow;
+
+                // Checks if this (x, y) is in the enemy's general zone and can be accessed through its image
+                if(enemies[i].pointInEnemy(x, y)){
+                    // Finds the corresponding row and column on the enemy image
+                    int enemyRow = y - enemy.pos.y;
+                    int enemyCol = x - enemy.pos.x;
+
+                    // Checks if both image arrays contain a drawn pixel at this (x, y)
+                    if(enemyImageArray[enemyRow * enemy.height + enemyCol] != -1 && playerImageArray[playerRow * player.height + playerCol] != -1) {
+                        gameOver = true;
+                        break;
+                    }
                 }
             }
         }
 
-        // for each bullet
+        /*
+            Enemy - Bullet collisions
+        */
+
         for(int j = 0; j < bullets.size(); j++) {
             Bullet &bullet = bullets[j];
+
+            // Stores bullet's image array
             int *bulletImageArray = bullet.bulletImage.saved_image;
 
-            for(int row = 0; row < bullet.height; row++) {
-                for(int col = 0; col < bullet.width; col++){
-                    int x = bullet.pos.x + col;
-                    int y = bullet.pos.y + row;
+            // Go through the rows and columns of the bullet object
+            for(int bulletRow = 0; bulletRow < bullet.height; bulletRow++) {
+                for(int bulletCol = 0; bulletCol < bullet.width; bulletCol++){
+                    // Find the corresponding (x, y) position on the screen for the bulletRow and bulletCol
+                    int x = bullet.pos.x + bulletCol;
+                    int y = bullet.pos.y + bulletRow;
 
-                        if(enemies[i].pointInEnemy(x, y) && bulletImageArray[row * bullet.height + col] != -1) {
-                        // remove bullet and enemy
-                        bullets.erase(bullets.begin() + j, bullets.begin() + j + 1);
-                        j--;
+                    // Checks if this (x, y) is in the enemy's general zone and can be accessed through its image
+                    if(enemies[i].pointInEnemy(x, y)){
+                        // Finds the corresponding row and column on the enemy image
+                        int enemyRow = y - enemy.pos.y;
+                        int enemyCol = x - enemy.pos.x;
 
-                        enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
-                        i--;
+                        // Checks if both image arrays contain a drawn pixel at this (x, y)
+                        if(enemyImageArray[enemyRow * enemy.height + enemyCol] != -1 && bulletImageArray[bulletRow * bullet.height + bulletCol] != -1) {
+                            // Remove both the bullet and the enemy
+                            enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
+                            bullets.erase(bullets.begin() + j, bullets.begin() + j + 1);
+                            
+                            // Update indices
+                            i--;
+                            j--;
+                            
+                            // Update number of enemies killed
+                            numEnemiesKilled++;
 
-                        // update number of enemies killed
-                        numEnemiesKilled++;
-
-                        // give player 2 ammo
-                        player.ammo += 2;
+                            // Give player 2 ammo
+                            player.ammo += 2;
+                        }
                     }
                 }
             }
         }
     }
 
-    // for each tracker bullet
-    for (int i = 0; i < trackerBullets.size(); i++) {
-        int *playerImageArray = player.playerImage.saved_image;
-        bool trackerBulletHit = false;
-        for(int row = 0; row < player.height && !trackerBulletHit; row++) {
-            for(int col = 0; col < player.width; col++){
-                int x = player.pos.x + col;
-                int y = player.pos.y + row;
+    /*
+        Player - TrackerBullet collisions
+    */
 
-                if(trackerBullets[i].pointInBullet(x, y) && playerImageArray[row * player.height + col] != -1) {
+    for (int i = 0; i < trackerBullets.size(); i++) {
+        // Tracks whether the current trackerBullet has hit the player
+        bool trackerBulletHit = false;
+
+        // Go through the rows and columns of player object
+        for(int playerRow = 0; playerRow < player.height && !trackerBulletHit; playerRow++) {
+            for(int playerCol = 0; playerCol < player.width; playerCol++) {
+                // Find corresponding (x, y) position on the screen for the playerRow and playerCol
+                int x = player.pos.x + playerCol;
+                int y = player.pos.y + playerRow;
+
+                // Checks if both the trackerBullet object is at (x, y) and the playerImage is rendered there
+                if(trackerBullets[i].pointInBullet(x, y) && playerImageArray[playerRow * player.height + playerCol] != -1) {
+                    // Reset's player's force and set's its velocity to the trackerBullet's
                     player.force.reset();
                     player.vel = player.vel.add(trackerBullets[i].vel);
+                    
+                    // Removes the tracker bullet
                     trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
                     i--;
+
                     trackerBulletHit = true;
                     break;
                 }
