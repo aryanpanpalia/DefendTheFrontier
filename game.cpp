@@ -195,6 +195,7 @@ void Game::handleCollisions() {
                 int y = player.pos.y + row;
 
                 if(trackerBullets[i].pointInBullet(x, y) && playerImageArray[row * player.height + col] != -1) {
+                    player.force.reset();
                     player.vel = player.vel.add(trackerBullets[i].vel);
                     trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
                     i--;
