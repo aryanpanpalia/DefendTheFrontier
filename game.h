@@ -22,6 +22,7 @@ class Game {
         Game(int diff);
         void render();
         void update();
+        void spawnEnemy();
         void playerOutOfBounds();
         void handleCollisions();
 };

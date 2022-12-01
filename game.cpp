@@ -30,9 +30,7 @@ void Game::render() {
     }
 
     for(Enemy &enemy: enemies) {
-        if(enemy.onScreen) {
-            enemy.render();
-        }
+        enemy.render();
     }
 
     for(TrackerBullet &trackerBullet: trackerBullets) {
@@ -78,18 +76,10 @@ void Game::update() {
         enemy.update();
 
         // If an enemy exits the screen, remove it from the enemies vector
-        // If an enemy enters the screen, set onScreen property to true
         if(enemy.pos.x <= 0 || enemy.pos.x >= WINDOW_WIDTH - enemy.width || enemy.pos.y <= 0 || enemy.pos.y >= WINDOW_HEIGHT - enemy.height) {
-            if(enemy.onScreen) {
-                enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
-                i--;
-            }
-        } else {
-            if(!enemy.onScreen) {
-                enemy.onScreen = true;
-                enemies[rand() % enemies.size()].shoot();
-            }
-        }
+            enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
+            i--;
+        } 
     }
 
     for(int i = 0; i < trackerBullets.size(); i++) {
@@ -111,36 +101,43 @@ void Game::update() {
     // Gets time since last enemy was spawned
     float timeSinceNewEnemy = TimeNow() - lastEnemySpawnTime;
 
-    // If it has been 2 seconds since an enemy was spawned, spawn a new enemy and reset the spawn timer
+    // If it has been 2 seconds since an enemy was spawned, spawn a new enemy, reset the spawn timer, and shoot a tracker bullet
     if(timeSinceNewEnemy > 2) {
-        float initialX, initialY, angle;
-
-        int side = rand() % 4;
-        switch(side) {
-            case 0:
-                initialX = 340;
-                initialY = (rand() % 280) - 20;
-                break;
-            case 1:
-                initialX = (rand() % 360) - 20;
-                initialY = -20;
-                break;
-            case 2:
-                initialX = -20;
-                initialY = (rand() % 280) - 20;
-                break;
-            case 3:
-                initialX = (rand() % 360) - 20;
-                initialY = 260;
-                break;
-        }
-
-        angle = atan2(initialY - player.pos.y, player.pos.x - initialX);
-
-        // Append new enemy to enemies vector
-        enemies.push_back(Enemy(initialX, initialY, angle, this));
+        spawnEnemy();
         lastEnemySpawnTime = TimeNow();
+
+        // Shoot a tracker bullet from a random enemy
+        enemies[rand() % enemies.size()].shoot();
     }
+}
+
+void Game::spawnEnemy() {
+    float initialX, initialY, angle;
+
+    int side = rand() % 4;
+    switch(side) {
+        case 0:
+            initialX = 320 - Enemy::width;
+            initialY = (rand() % (240 - Enemy::height));
+            break;
+        case 1:
+            initialX = (rand() % (320 - Enemy::width));
+            initialY = 0;
+            break;
+        case 2:
+            initialX = 0;
+            initialY = (rand() % (240 - Enemy::height));
+            break;
+        case 3:
+            initialX = (rand() % 320 - Enemy::width);
+            initialY = 220;
+            break;
+    }
+
+    angle = atan2(initialY - player.pos.y, player.pos.x - initialX);
+
+    // Append new enemy to enemies vector
+    enemies.push_back(Enemy(initialX, initialY, angle, this));
 }
 
 void Game::handleCollisions() {

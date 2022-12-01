@@ -6,10 +6,6 @@
 Enemy::Enemy(float initialX, float initialY, float a, Game *g) {
     game = g;
 
-    width = 15;
-    height = 15;
-    onScreen = false;
-
     pos = Vector2D(initialX, initialY);
     vel = Vector2D(cos(a), -sin(a));
 

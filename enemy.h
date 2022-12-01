@@ -8,10 +8,9 @@ class Game;
 class Enemy {
     public:
         Game *game;
-        int width, height;
+        const static int width = 15, height = 15;
         Vector2D pos, vel, force, velG, forceG;
         float mass;
-        bool onScreen;
         Image enemyImage;
 
         Enemy(float initialX, float initialY, float angle, Game *game);
