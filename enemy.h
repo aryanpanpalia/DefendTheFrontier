@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector2d.h>
+#include "image.h"
 
 class Game;
 
@@ -11,6 +12,7 @@ class Enemy {
         Vector2D pos, vel, force, velG, forceG;
         float mass;
         bool onScreen;
+        Image enemyImage;
 
         Enemy(float initialX, float initialY, float angle, Game *game);
         Vector2D getCenter();

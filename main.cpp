@@ -262,9 +262,9 @@ void Credits() {
 
     LCD.WriteAt("Game Title", 10, 10);
     LCD.WriteAt("Created By:", 10, 30);
-    LCD.WriteAt("Thomas Banko", 10, 50);
+    LCD.WriteAt("Aryan Panpalia", 10, 50);
     LCD.WriteAt("and", 10, 70);
-    LCD.WriteAt("Aryan Panpalia", 10, 90);
+    LCD.WriteAt("Thomas Banko", 10, 90);
     LCD.WriteAt("Using:", 10, 110);
     LCD.WriteAt("Proteus Simulator", 10, 130);
     LCD.WriteAt("Libraries from OSU FEH", 10, 150);
