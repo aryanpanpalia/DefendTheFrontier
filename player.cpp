@@ -95,6 +95,8 @@ void Player::shoot(float angle) {
 
         // decrement ammo
         ammo--;
+
+        game->numShots++;
     }
 }
 
