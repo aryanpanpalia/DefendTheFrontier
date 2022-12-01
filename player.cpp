@@ -2,13 +2,14 @@
 #include "game.h"
 #include "bullet.h"
 #include "FEHLCD.h"
+#include "image.h"
 #include <math.h>
 
 #define WINDOW_WIDTH 320
 #define WINDOW_HEIGHT 240
 
 Player::Player() {
-    width = 20;
+    width = 12;
     height = 20;
 
     pos = Vector2D((WINDOW_WIDTH - width) / 2, (WINDOW_HEIGHT - height) / 2);
@@ -19,8 +20,9 @@ Player::Player() {
     forceG = Vector2D(0, 0.5);
 
     mass = 10;
-
     ammo = 10;
+
+    playerImage.Open("Player.pic");
 }
 
 Vector2D Player::getCenter() {
@@ -97,5 +99,6 @@ void Player::shoot(float angle) {
 }
 
 void Player::render() {
-    LCD.FillRectangle(pos.x, pos.y, width, height);
+    playerImage.Draw(pos.x, pos.y);
+    LCD.SetFontColor(WHITE);
 }

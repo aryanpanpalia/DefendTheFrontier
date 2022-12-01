@@ -138,80 +138,66 @@ void Game::update() {
     }
 }
 
-void Game::handleCollisions() {
-    // initialize variables to store player attributes
-    Vector2D playerCenter = player.getCenter();
-    float halfPlayerHeight = player.height / 2.0;
-    float halfPlayerWidth = player.width / 2.0;
-    
-    // calculate radius of circle circumscribing player square
-    float playerRadius = sqrt(halfPlayerHeight*halfPlayerHeight + halfPlayerWidth*halfPlayerWidth);
-
+void Game::handleCollisions() {    
     // for each enemy
     for (int i = 0; i < enemies.size(); i++) {
+        int *playerImageArray = player.playerImage.saved_image;
+        for(int row = 0; row < player.height && !gameOver; row++) {
+            for(int col = 0; col < player.width; col++){
+                int x = player.pos.x + col;
+                int y = player.pos.y + row;
+
+                if(enemies[i].pointInEnemy(x, y) && playerImageArray[row * player.height + col] != -1) {
+                    gameOver = true;
+                    break;
+                }
+            }
+        }
+
         // initialize variables with enemy attributes
         Vector2D enemyPosition = enemies[i].getCenter();
         float halfEnemyHeight = enemies[i].height/2.0; 
         float halfEnemyWidth = enemies[i].width/2.0;
         
-        // calculate radius of circle circumscribing enemy square
-        float enemyRadius = sqrt(pow(halfEnemyHeight, 2) + pow(halfEnemyWidth, 2));
-
-        // if player and enemy objects are within their radii
-        if (playerCenter.sub(enemyPosition).magnitude() < playerRadius+enemyRadius) {
-            // if player and enemy objects intersect
-            if (playerCenter.y-halfPlayerHeight < enemyPosition.y+halfEnemyHeight && 
-                    playerCenter.y+halfPlayerHeight > enemyPosition.y-halfEnemyHeight && 
-                    playerCenter.x-halfPlayerWidth < enemyPosition.x+halfEnemyWidth && 
-                    playerCenter.x+halfPlayerWidth > enemyPosition.x-halfEnemyWidth) {
-                // end game
-                gameOver = true;
-            }
-        }
-
         // for each bullet
         for (int j = 0; j < bullets.size(); j++) {
             // initialize variables with bullet attributes
             Vector2D bulletPosition = bullets[j].getCenter();
             float bulletRadius = bullets[j].radius;
 
-            // if enemy and bullet objects are within their radii
-            if (enemyPosition.sub(bulletPosition).magnitude() < enemyRadius+bulletRadius) {
-                // if enemy and bullet objects intersect
-                if (bulletPosition.y-bulletRadius < enemyPosition.y+halfEnemyHeight && 
-                        bulletPosition.y+bulletRadius > enemyPosition.y-halfEnemyHeight && 
-                        bulletPosition.x-bulletRadius < enemyPosition.x+halfEnemyWidth && 
-                        bulletPosition.x+bulletRadius > enemyPosition.x-halfEnemyWidth) {
-                    // remove bullet and enemy
-                    bullets.erase(bullets.begin() + j, bullets.begin() + j + 1);
-                    j--;
-                    enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
-                    i--;
-                    // update number of enemies killed
-                    numEnemiesKilled++;
-                    // give player 2 ammo
-                    player.ammo += 2;
-                }
+            // if enemy and bullet objects intersect
+            if (bulletPosition.y-bulletRadius < enemyPosition.y+halfEnemyHeight && 
+                    bulletPosition.y+bulletRadius > enemyPosition.y-halfEnemyHeight && 
+                    bulletPosition.x-bulletRadius < enemyPosition.x+halfEnemyWidth && 
+                    bulletPosition.x+bulletRadius > enemyPosition.x-halfEnemyWidth) {
+                // remove bullet and enemy
+                bullets.erase(bullets.begin() + j, bullets.begin() + j + 1);
+                j--;
+                enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
+                i--;
+                // update number of enemies killed
+                numEnemiesKilled++;
+                // give player 2 ammo
+                player.ammo += 2;
             }
         }
+    }
 
-        // for each tracker bullet
-        for (int i = 0; i < trackerBullets.size(); i++) {
-            // initialize variables with bullet attributes
-            Vector2D bulletPosition = trackerBullets[i].getCenter();
-            float bulletRadius = trackerBullets[i].radius;
+    // for each tracker bullet
+    for (int i = 0; i < trackerBullets.size(); i++) {
+        int *playerImageArray = player.playerImage.saved_image;
+        bool trackerBulletHit = false;
+        for(int row = 0; row < player.height && !trackerBulletHit; row++) {
+            for(int col = 0; col < player.width; col++){
+                int x = player.pos.x + col;
+                int y = player.pos.y + row;
 
-            // if player and tracker bullet objects are within their radii
-            if (playerCenter.sub(bulletPosition).magnitude() < playerRadius+bulletRadius) {
-                // if player and tracker bullet objects intersect
-                if (bulletPosition.y-bulletRadius < playerCenter.y+halfPlayerHeight && 
-                        bulletPosition.y+bulletRadius > playerCenter.y-halfPlayerHeight && 
-                        bulletPosition.x-bulletRadius < playerCenter.x+halfPlayerWidth && 
-                        bulletPosition.x+bulletRadius > playerCenter.x-halfPlayerWidth) {
-
-                        player.vel = player.vel.add(trackerBullets[i].vel);
-                        trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
-                        i--;
+                if(trackerBullets[i].pointInBullet(x, y) && playerImageArray[row * player.height + col] != -1) {
+                    player.vel = player.vel.add(trackerBullets[i].vel);
+                    trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
+                    i--;
+                    trackerBulletHit = true;
+                    break;
                 }
             }
         }

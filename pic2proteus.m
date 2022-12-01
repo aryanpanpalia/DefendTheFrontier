@@ -37,7 +37,7 @@ end
 picsize=size(scale_pic);
 
 filenoext=split(filename,'.');%delimite filename by extension
-fehfile=fopen([filenoext{1},'FEH.pic'],'w');
+fehfile=fopen([filenoext{1},'.pic'],'w');
 fprintf(fehfile,'%d %d\n',picsize(1),picsize(2));
 for(i=1:picsize(1))
     for(j=1:picsize(2))
