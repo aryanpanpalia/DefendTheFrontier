@@ -10,6 +10,8 @@
 
 using namespace FEHIcon;
 
+int highScore1 = 0, highScore2 = 0, highScore3 = 0, totalEnemiesKilled = 0, totalShots = 0, totalDeaths = 0;
+
 /*
     Play Game Function
 */
@@ -135,6 +137,21 @@ void Play(){
         game.handleCollisions();
         
     }
+
+    if (game.score > highScore1) {
+        highScore3 = highScore2;
+        highScore2 = highScore1;
+        highScore1 = game.score;
+    } else if (game.score > highScore2) {
+        highScore3 = highScore2;
+        highScore2 = game.score;
+    } else if (game.score > highScore3) {
+        highScore3 = game.score;
+    }
+
+    totalEnemiesKilled += game.numEnemiesKilled;
+    totalShots += game.numShots;
+    totalDeaths += 1;
 }
 
 /*
@@ -151,13 +168,20 @@ void Statistics() {
 
     // Initial XY position of back button    
     int buttonStartX = (WINDOW_WIDTH - buttonWidth) / 2;
-    int buttonStartY = 150;
+    int buttonStartY = 175;
 
     backButton.SetProperties(backString, buttonStartX, buttonStartY, buttonWidth, buttonHeight, RED, WHITE);
     
     LCD.Clear();
 
-    LCD.WriteAt("Viewing Statistics", (WINDOW_WIDTH / 2) - 108, 50);
+    LCD.WriteAt("High Score 1:", 10, 10);       LCD.WriteAt(highScore1, WINDOW_WIDTH-100, 10);
+    LCD.WriteAt("High Score 2:", 10, 30);       LCD.WriteAt(highScore2, WINDOW_WIDTH-100, 30);
+    LCD.WriteAt("High Score 3:", 10, 50);       LCD.WriteAt(highScore3, WINDOW_WIDTH-100, 50);
+    LCD.WriteAt("# Enemies Killed:", 10, 70);   LCD.WriteAt(totalEnemiesKilled, WINDOW_WIDTH-100, 70);
+    LCD.WriteAt("# Shots fired:", 10, 90);      LCD.WriteAt(totalShots, WINDOW_WIDTH-100, 90);
+    LCD.WriteAt("# Deaths:", 10, 110);          LCD.WriteAt(totalDeaths, WINDOW_WIDTH-100, 110);
+    LCD.WriteAt("% Accuracy:", 10, 130);        LCD.WriteAt((float)totalEnemiesKilled/totalShots, WINDOW_WIDTH-100, 130);
+    LCD.WriteAt("", 10, 150);
 
     LCD.SetFontColor(RED);
     LCD.FillRectangle(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
@@ -187,13 +211,20 @@ void Instructions() {
 
     // Initial XY position of back button    
     int buttonStartX = (WINDOW_WIDTH - buttonWidth) / 2;
-    int buttonStartY = 150;
+    int buttonStartY = 175;
 
     backButton.SetProperties(backString, buttonStartX, buttonStartY, buttonWidth, buttonHeight, RED, WHITE);
     
     LCD.Clear();
 
-    LCD.WriteAt("Viewing Instructions", (WINDOW_WIDTH / 2) - 120, 50);
+    LCD.WriteAt("To play, click anywhere", 10, 10);
+    LCD.WriteAt("outside the player. Shoot", 10, 30);
+    LCD.WriteAt("at enemies to kill them", 10, 50);
+    LCD.WriteAt("and get ammo while moving", 10, 70);
+    LCD.WriteAt("yourself in the opposite", 10, 90);
+    LCD.WriteAt("direction. Don't run into", 10, 110);
+    LCD.WriteAt("an enemy or off the", 10, 130);
+    LCD.WriteAt("screen or you'll lose!", 10, 150);
 
     LCD.SetFontColor(RED);
     LCD.FillRectangle(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
@@ -223,13 +254,20 @@ void Credits() {
 
     // Initial XY position of back button    
     int buttonStartX = (WINDOW_WIDTH - buttonWidth) / 2;
-    int buttonStartY = 150;
+    int buttonStartY = 175;
 
     backButton.SetProperties(backString, buttonStartX, buttonStartY, buttonWidth, buttonHeight, RED, WHITE);
     
     LCD.Clear();
 
-    LCD.WriteAt("Viewing Credits", (WINDOW_WIDTH / 2) - 90, 50);
+    LCD.WriteAt("Game Title", 10, 10);
+    LCD.WriteAt("Created By:", 10, 30);
+    LCD.WriteAt("Aryan Panpalia", 10, 50);
+    LCD.WriteAt("and", 10, 70);
+    LCD.WriteAt("Thomas Banko", 10, 90);
+    LCD.WriteAt("Using:", 10, 110);
+    LCD.WriteAt("Proteus Simulator", 10, 130);
+    LCD.WriteAt("Libraries from OSU FEH", 10, 150);
 
     LCD.SetFontColor(RED);
     LCD.FillRectangle(buttonStartX, buttonStartY, buttonWidth, buttonHeight);

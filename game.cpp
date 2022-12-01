@@ -13,7 +13,10 @@ Game::Game(int diff) {
     player.game = this;
     lastEnemySpawnTime = TimeNow();
     gameOver = false;
+    score = 0;
     numEnemiesKilled = 0;
+    numShots = 0;
+    numDeaths = 0;
     difficulty = diff;
 }
 
@@ -39,7 +42,7 @@ void Game::render() {
     LCD.WriteAt("Ammo: ", 0 , 0);
     LCD.WriteAt(player.ammo, 60, 0);
 
-    int score = numEnemiesKilled * 10;
+    score = numEnemiesKilled * 10;
     LCD.WriteAt("Score: ", 200, 0);
     LCD.WriteAt(score, 284, 0);
 

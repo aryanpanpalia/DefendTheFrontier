@@ -13,7 +13,10 @@ class Game {
         std::vector<Enemy> enemies;
         float lastEnemySpawnTime;
         bool gameOver;
+        int score;
         int numEnemiesKilled;
+        int numShots;
+        int numDeaths;
         int difficulty;
 
         Game(int diff);
