@@ -263,6 +263,9 @@ void Game::handleCollisions() {
     */
 
     for (int i = 0; i < trackerBullets.size(); i++) {
+        TrackerBullet &trackerBullet = trackerBullets[i];
+        int *trackerBulletImageArray = trackerBullet.trackerBulletImages[trackerBullet.imageIndex].saved_image;
+
         // Tracks whether the current trackerBullet has hit the player
         bool trackerBulletHit = false;
 
@@ -273,22 +276,29 @@ void Game::handleCollisions() {
                 int x = player.pos.x + playerCol;
                 int y = player.pos.y + playerRow;
 
-                // Checks if both the trackerBullet object is at (x, y) and the playerImage is rendered there
-                if(trackerBullets[i].pointInBullet(x, y) && playerImageArray[playerRow * player.height + playerCol] != -1) {
-                    // Reset's player's force and set's its velocity to the trackerBullet's
-                    if(trackerBulletsKill) {
-                        gameOver = true;
-                    } else {
-                        player.force.reset();
-                        player.vel = player.vel.add(trackerBullets[i].vel.norm().mult(knockBack));
+                // Checks if this (x, y) is in the tracker bullet's general zone and can be accessed through its image
+                if(trackerBullet.pointInBullet(x, y)) {
+                    // Finds the corresponding row and column on the tracker bullet image
+                    int trackerBulletRow = y - trackerBullet.pos.y;
+                    int trackerBulletCol = x - trackerBullet.pos.x;
 
-                        // Removes the tracker bullet
-                        trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
-                        i--;
+                    // Checks if both image arrays contain a drawn pixel at this (x, y)
+                    if(trackerBulletImageArray[trackerBulletRow * trackerBullet.height + trackerBulletCol] != -1 && playerImageArray[playerRow * player.height + playerCol] != -1) {
+                        // Reset's player's force and set's its velocity to the trackerBullet's
+                        if(trackerBulletsKill) {
+                            gameOver = true;
+                        } else {
+                            player.force.reset();
+                            player.vel = player.vel.add(trackerBullets[i].vel.norm().mult(knockBack));
+
+                            // Removes the tracker bullet
+                            trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
+                            i--;
+                        }
+
+                        trackerBulletHit = true;
+                        break;
                     }
-
-                    trackerBulletHit = true;
-                    break;
                 }
             }
         }
