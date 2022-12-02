@@ -86,7 +86,15 @@ void Player::shoot(float angle) {
         vel.reset();
 
         // Add a force in the opposite direction of the shot
-        Vector2D shotForce(-8.0 * cos(angle), 8.0 * sin(angle));
+        Vector2D shotForce;
+        
+        // If shooting down, have a larger force in the Y direction and a smaller force in the X direction
+        if(angle < 0) {
+            shotForce.set(-7.0 * cos(angle), 9.0 * sin(angle));
+        } else {
+            shotForce.set(-8.0 * cos(angle), 8.0 * sin(angle));
+        }
+
         force = force.add(shotForce);
 
         // Append Bullet shooting away from player to game object's bullet vector
