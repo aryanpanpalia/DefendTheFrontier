@@ -11,14 +11,42 @@
 
 Game::Game(int diff) {
     player.game = this;
-    lastEnemySpawnTime = TimeNow();
+    lastEnemySpawnTime = -1;
     gameOver = false;
     score = 0;
     numEnemiesKilled = 0;
     numShots = 0;
     numDeaths = 0;
-    knockBack = 4;
+    
     difficulty = diff;
+
+    if(difficulty == 0) {
+        player.ammo = 20;
+        hasTrackerBullets = false;
+        trackerBulletsKill = false;
+        ammoPerKill = 4;
+        timeBetweenEnemySpawns = 3;
+    } else if(difficulty == 1) {
+        player.ammo = 10;
+        hasTrackerBullets = false;
+        trackerBulletsKill = false;
+        ammoPerKill = 2;
+        timeBetweenEnemySpawns = 2;
+    } else if(difficulty == 2) {
+        player.ammo = 10;
+        hasTrackerBullets = true;
+        trackerBulletsKill = false;
+        knockBack = 4;
+        ammoPerKill = 2;
+        timeBetweenEnemySpawns = 2;
+    } else if(difficulty == 3) {
+        player.ammo = 10;
+        hasTrackerBullets = true;
+        trackerBulletsKill = true;
+        knockBack = 0;
+        ammoPerKill = 1;
+        timeBetweenEnemySpawns = 1;
+    }
 }
 
 void Game::render() {
@@ -98,12 +126,14 @@ void Game::update() {
     float timeSinceNewEnemy = TimeNow() - lastEnemySpawnTime;
 
     // If it has been 2 seconds since an enemy was spawned, spawn a new enemy, reset the spawn timer, and shoot a tracker bullet
-    if(timeSinceNewEnemy > 2) {
+    if(timeSinceNewEnemy > timeBetweenEnemySpawns) {
         spawnEnemy();
         lastEnemySpawnTime = TimeNow();
 
         // Shoot a tracker bullet from a random enemy
-        enemies[rand() % enemies.size()].shoot();
+        if(hasTrackerBullets){
+            enemies[rand() % enemies.size()].shoot();
+        }
     }
 }
 
@@ -205,8 +235,8 @@ void Game::handleCollisions() {
                             // Update number of enemies killed
                             numEnemiesKilled++;
 
-                            // Give player 2 ammo
-                            player.ammo += 2;
+                            // Give player ammo
+                            player.ammo += ammoPerKill;
 
                             goto breakOutOfBulletLoop;
                         }
@@ -234,12 +264,16 @@ void Game::handleCollisions() {
                 // Checks if both the trackerBullet object is at (x, y) and the playerImage is rendered there
                 if(trackerBullets[i].pointInBullet(x, y) && playerImageArray[playerRow * player.height + playerCol] != -1) {
                     // Reset's player's force and set's its velocity to the trackerBullet's
-                    player.force.reset();
-                    player.vel = player.vel.add(trackerBullets[i].vel.norm().mult(knockBack));
-                    
-                    // Removes the tracker bullet
-                    trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
-                    i--;
+                    if(trackerBulletsKill) {
+                        gameOver = true;
+                    } else {
+                        player.force.reset();
+                        player.vel = player.vel.add(trackerBullets[i].vel.norm().mult(knockBack));
+
+                        // Removes the tracker bullet
+                        trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
+                        i--;
+                    }
 
                     trackerBulletHit = true;
                     break;

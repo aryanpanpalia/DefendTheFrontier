@@ -13,12 +13,17 @@ class Game {
         std::vector<Enemy> enemies;
         float lastEnemySpawnTime;
         bool gameOver;
-        int score;
-        int numEnemiesKilled;
-        int numShots;
-        int numDeaths;
-        int knockBack;
+
+        // Statistics to keep track of
+        int score, numEnemiesKilled, numShots, numDeaths;
+        
+        // The difficulty mode and what it affects
         int difficulty;
+        bool hasTrackerBullets;
+        bool trackerBulletsKill;
+        int knockBack;
+        int ammoPerKill;
+        int timeBetweenEnemySpawns;
 
         Game(int diff);
         void render();
