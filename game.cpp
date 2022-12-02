@@ -47,10 +47,22 @@ Game::Game(int diff) {
         ammoPerKill = 1;
         timeBetweenEnemySpawns = 1;
     }
+
+    backgroundImage.Open("Background.pic");
+    backgroundImageX = 0; 
+    backgroundImageY = 0;
 }
 
 void Game::render() {
     LCD.Clear();
+
+    // Tile the background images so that as it ends on one side it starts on another
+    backgroundImage.Draw(backgroundImageX, backgroundImageY);
+    backgroundImage.Draw(backgroundImageX + backgroundImage.cols, backgroundImageY);
+    
+    // Scroll the image
+    backgroundImageX--;
+    backgroundImageX %= backgroundImage.cols;
 
     LCD.SetFontColor(WHITE);
     LCD.DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);

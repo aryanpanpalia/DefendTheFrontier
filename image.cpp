@@ -2,6 +2,9 @@
 // Code modified by Aryan Panpalia
 #include <Image.h>
 
+#define WINDOW_WIDTH 320
+#define WINDOW_HEIGHT 240
+
 Image::Image()
 {
 	rows = 0;
@@ -58,8 +61,11 @@ void Image::Draw(int x, int y)
 		{
 			if (*(saved_image + (i * cols) + j) != -1)
 			{
-				LCD.SetFontColor(*(saved_image + (i * cols) + j));
-				LCD.DrawPixel(j + x, i + y);
+				// Only draw the pixel if it is within the bounds of the window
+				if(0 <= j + x && j + x <= WINDOW_WIDTH && 0 <= i + y && i + y <= WINDOW_HEIGHT) {
+					LCD.SetFontColor(*(saved_image + (i * cols) + j));
+					LCD.DrawPixel(j + x, i + y);
+				}
 			}
 		}
 	}

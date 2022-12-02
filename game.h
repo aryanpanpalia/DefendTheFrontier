@@ -25,6 +25,9 @@ class Game {
         int ammoPerKill;
         int timeBetweenEnemySpawns;
 
+        Image backgroundImage;
+        int backgroundImageX, backgroundImageY;
+
         Game(int diff);
         void render();
         void update();
