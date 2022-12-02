@@ -52,6 +52,9 @@ Game::Game(int diff) {
 void Game::render() {
     LCD.Clear();
 
+    LCD.SetFontColor(WHITE);
+    LCD.DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     player.render();
 
     for(Bullet &bullet: bullets) {
@@ -66,12 +69,21 @@ void Game::render() {
         trackerBullet.render();
     }
 
-    LCD.WriteAt("Ammo: ", 0 , 0);
-    LCD.WriteAt(player.ammo, 60, 0);
+    LCD.WriteAt("Ammo: ", 5, 5);
+    LCD.WriteAt(player.ammo, 65, 5);
 
     score = numEnemiesKilled * 10;
-    LCD.WriteAt("Score: ", 200, 0);
-    LCD.WriteAt(score, 284, 0);
+    
+    int digitsInScore = 1;
+    if(score >= 10) {
+        digitsInScore = log10(score) + 1;
+    }
+
+    int scoreDigitsWidth = 12 * digitsInScore;
+    int scoreTotalWidth = 84 + scoreDigitsWidth;
+    
+    LCD.WriteAt("Score: ", WINDOW_WIDTH - scoreTotalWidth - 5, 5);
+    LCD.WriteAt(score, WINDOW_WIDTH - scoreDigitsWidth - 5, 5);
 
     LCD.Update();
 }
@@ -284,20 +296,20 @@ void Game::handleCollisions() {
 }
 
 void Game::playerOutOfBounds() {
-    if (player.pos.x <= 0) {
-        player.pos.x = 0;
+    if (player.pos.x <= 1) {
+        player.pos.x = 1;
         gameOver = true;
     }
-    if (player.pos.x >= WINDOW_WIDTH - player.width) {
-        player.pos.x = WINDOW_WIDTH - player.width;
+    if (player.pos.x >= WINDOW_WIDTH - player.width - 1) {
+        player.pos.x = WINDOW_WIDTH - player.width - 1;
         gameOver = true;
     }
-    if (player.pos.y <= 0) {
-        player.pos.y = 0;
+    if (player.pos.y <= 1) {
+        player.pos.y = 1;
         gameOver = true;
     }
-    if (player.pos.y >= WINDOW_HEIGHT - player.height) {
-        player.pos.y = WINDOW_HEIGHT - player.height;
+    if (player.pos.y >= WINDOW_HEIGHT - player.height - 1) {
+        player.pos.y = WINDOW_HEIGHT - player.height - 1;
         gameOver = true;
     }
 }
