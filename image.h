@@ -15,5 +15,4 @@ class Image
 		void Draw(int, int);
 		void Rotate180();
 		void Close();
-
 };

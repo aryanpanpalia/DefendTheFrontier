@@ -11,23 +11,20 @@ Bullet::Bullet(float initialX, float initialY, float a) {
     pos = Vector2D(initialX, initialY);
     vel = Vector2D(3 * cos(a), -3 * sin(a));
     angle = a;
-
-    char buf[50];
-    int angleInDegrees = (180 * angle) / PI;
-    int imageAngle = ((int) angleInDegrees / 10) * 10;
-
-    if(imageAngle > 0) {
-        snprintf(buf, 50, "bulletImages/Bullet%d.pic", imageAngle);
-        bulletImage.Open(buf);
-    } else {
-        imageAngle += 180;
-        snprintf(buf, 50, "bulletImages/Bullet%d.pic", imageAngle);
-        bulletImage.Open(buf);
-        bulletImage.Rotate180();
+    frameCount = 0;
+    
+    for(int i = 0; i < 4; i++) {
+        char fname[50];
+        snprintf(fname, 50, "ElectroBall_%d.pic", i + 1);
+        bulletImages[i].Open(fname);
     }
 
-    width = bulletImage.cols;
-    height = bulletImage.rows; 
+    width = bulletImages[0].cols;
+    height = bulletImages[0].rows;
+
+    for (int i = 0; i < 4; i++) {
+        imageIndex = rand() % 4;
+    }
 }
 
 Vector2D Bullet::getCenter() {
@@ -44,22 +41,40 @@ void Bullet::update() {
 }
 
 void Bullet::render() {
-    bulletImage.Draw(pos.x, pos.y);
+    if(frameCount % 10 == 0) {
+        imageIndex++;
+        imageIndex %= 4;
+        frameCount = 0;
+    }
+
+    bulletImages[imageIndex].Draw(pos.x, pos.y);
+
+    frameCount++;
     LCD.SetFontColor(WHITE);
 }
 
 TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p){
-    radius = 2;
+    pos = Vector2D(initialX, initialY);
     mass = 10;
-
+    frameCount = 0;
     player = p;
 
-    pos = Vector2D(initialX, initialY);
     vel = player->pos.sub(pos).norm();
+
+    for(int i = 0; i < 2; i++) {
+        char fname[50];
+        snprintf(fname, 50, "EnemyBullet_%d.pic", i + 1);
+        trackerBulletImages[i].Open(fname);
+    }
+
+    width = trackerBulletImages[0].cols;
+    height = trackerBulletImages[0].rows;
+
+    imageIndex = 0;
 }
 
 bool TrackerBullet::pointInBullet(int px, int py) {
-    return sqrt(pow(px - pos.x, 2) + pow(py - pos.y, 2)) <= radius;
+    return pos.x <= px && px <= pos.x + width && pos.y <= py && py <= pos.y + height;
 }
 
 void TrackerBullet::update() {
@@ -69,7 +84,14 @@ void TrackerBullet::update() {
 }
 
 void TrackerBullet::render() {
-    LCD.SetFontColor(ORANGERED);
-    LCD.DrawCircle(pos.x, pos.y, radius);
+    if(frameCount % 10 == 0) {
+        imageIndex++;
+        imageIndex %= 2;
+        frameCount = 0;
+    }
+
+    trackerBulletImages[imageIndex].Draw(pos.x, pos.y);
+
+    frameCount++;
     LCD.SetFontColor(WHITE);
 }

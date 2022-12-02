@@ -17,6 +17,7 @@ Game::Game(int diff) {
     numEnemiesKilled = 0;
     numShots = 0;
     numDeaths = 0;
+    knockBack = 4;
     difficulty = diff;
 }
 
@@ -54,16 +55,12 @@ void Game::update() {
     for(int i = 0; i < bullets.size(); i++) {
         // Create alias to bullets[i]
         Bullet &bullet = bullets[i];
-
-        // int bRadius = bullet.radius;
-        int bWidth = bullet.width;
-        int bHeight = bullet.height;
         
         // Update bullet object
         bullet.update();
 
         // If the bullet touches the edge, remove it from bullets vector
-        if(bullet.pos.x <= 0 || bullet.pos.x >= WINDOW_WIDTH - bWidth || bullet.pos.y <= 0 || bullet.pos.y >= WINDOW_HEIGHT - bHeight) {
+        if(bullet.pos.x <= 0 || bullet.pos.x >= WINDOW_WIDTH - bullet.width || bullet.pos.y <= 0 || bullet.pos.y >= WINDOW_HEIGHT - bullet.height) {
             bullets.erase(bullets.begin() + i, bullets.begin() + i + 1);
             i--;
         }
@@ -73,6 +70,7 @@ void Game::update() {
         // Create alias for enemies[i]
         Enemy &enemy = enemies[i];
 
+        // Update enemy object
         enemy.update();
 
         // If an enemy exits the screen, remove it from the enemies vector
@@ -85,14 +83,12 @@ void Game::update() {
     for(int i = 0; i < trackerBullets.size(); i++) {
         // Create alias to trackerBullets[i]
         TrackerBullet &trackerBullet = trackerBullets[i];
-
-        int bRadius = trackerBullet.radius;
         
         // Update trackerBullet object
         trackerBullet.update();
 
         // If the trackerBullet touches the edge, remove it from trackerBullets vector
-        if(trackerBullet.pos.x <= bRadius || trackerBullet.pos.x >= WINDOW_WIDTH - bRadius || trackerBullet.pos.y <= bRadius || trackerBullet.pos.y >= WINDOW_HEIGHT - bRadius) {
+        if(trackerBullet.pos.x <= 0 || trackerBullet.pos.x >= WINDOW_WIDTH - trackerBullet.width || trackerBullet.pos.y <= 0 || trackerBullet.pos.y >= WINDOW_HEIGHT - trackerBullet.height) {
             trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
             i--;
         }
@@ -182,7 +178,7 @@ void Game::handleCollisions() {
             Bullet &bullet = bullets[j];
 
             // Stores bullet's image array
-            int *bulletImageArray = bullet.bulletImage.saved_image;
+            int *bulletImageArray = bullet.bulletImages[bullet.imageIndex].saved_image;
 
             // Go through the rows and columns of the bullet object
             for(int bulletRow = 0; bulletRow < bullet.height; bulletRow++) {
@@ -205,18 +201,19 @@ void Game::handleCollisions() {
                             
                             // Update indices
                             i--;
-                            j--;
                             
                             // Update number of enemies killed
                             numEnemiesKilled++;
 
                             // Give player 2 ammo
                             player.ammo += 2;
+
+                            goto breakOutOfBulletLoop;
                         }
                     }
                 }
             }
-        }
+        } breakOutOfBulletLoop:;
     }
 
     /*
@@ -238,7 +235,7 @@ void Game::handleCollisions() {
                 if(trackerBullets[i].pointInBullet(x, y) && playerImageArray[playerRow * player.height + playerCol] != -1) {
                     // Reset's player's force and set's its velocity to the trackerBullet's
                     player.force.reset();
-                    player.vel = player.vel.add(trackerBullets[i].vel);
+                    player.vel = player.vel.add(trackerBullets[i].vel.norm().mult(knockBack));
                     
                     // Removes the tracker bullet
                     trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);

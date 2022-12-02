@@ -44,7 +44,9 @@ void Image::Open(const char *filename)
 		}
 	}
 
-	pic.close();
+	if (!pic.fail()) {
+		pic.close();
+	}
 }
 
 //x,y are top left location of where to draw picture
@@ -76,11 +78,16 @@ void Image::Rotate180() {
 		}
 	}
 
+	if (saved_image != NULL) {
+		free(saved_image);
+	}
 	saved_image = newImage;
 }
 
 //prevent memory leak issues after malloc
 void Image::Close()
 {
-	free(saved_image);
+	if (saved_image != NULL) {
+		free(saved_image);
+	}
 }

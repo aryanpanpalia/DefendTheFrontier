@@ -17,6 +17,7 @@ class Game {
         int numEnemiesKilled;
         int numShots;
         int numDeaths;
+        int knockBack;
         int difficulty;
 
         Game(int diff);
