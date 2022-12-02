@@ -130,12 +130,11 @@ void Play(){
         // Handle player out of bounds
         game.playerOutOfBounds();
 
-        // Render game
-        game.render();
-
         // Handle collisions
         game.handleCollisions();
-        
+
+        // Render game
+        game.render();
     }
 
     if (game.score > highScore1) {
