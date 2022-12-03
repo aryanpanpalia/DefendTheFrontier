@@ -5,6 +5,12 @@
 #define WINDOW_WIDTH 320
 #define WINDOW_HEIGHT 240
 
+/*
+	Creates an Image object
+
+	Parameters: none
+	Return value: none
+*/
 Image::Image()
 {
 	rows = 0;
@@ -12,7 +18,14 @@ Image::Image()
 	saved_image = NULL;
 }
 
-//filename is file output by MATLAB to draw. Should end in *FEH.pic
+/*
+	Opens an image
+
+	Parameters: 
+		filename: file output by MATLAB to draw that ends in a .pic
+
+	Return value: none
+*/
 void Image::Open(const char *filename)
 {
 	// Create file stream
@@ -52,7 +65,13 @@ void Image::Open(const char *filename)
 	}
 }
 
-//x,y are top left location of where to draw picture
+/*
+	Draws the image to the screen
+
+	Parameters:
+		x: x position of top left corner of where the draw the picture
+		y: y position of top left corner of where the draw the picture
+*/
 void Image::Draw(int x, int y)
 {
 	for (int i = 0; i < rows; i++)
@@ -71,26 +90,12 @@ void Image::Draw(int x, int y)
 	}
 }
 
-void Image::Rotate180() {
-	int *newImage = (int*)malloc(sizeof(int) * rows * cols);
+/*
+	Closes an image and prevents memory leak issues after malloc
 
-	for (int oldRow = 0; oldRow < rows; oldRow++)
-	{
-		for (int oldCol = 0; oldCol < cols; oldCol++)
-		{
-			int newRow = rows - oldRow - 1;
-			int newCol = cols - oldCol - 1;
-			newImage[newRow * cols + newCol] = saved_image[oldRow * cols + oldCol];
-		}
-	}
-
-	if (saved_image != NULL) {
-		free(saved_image);
-	}
-	saved_image = newImage;
-}
-
-//prevent memory leak issues after malloc
+	Parameters: none
+	Return value: none
+*/
 void Image::Close()
 {
 	if (saved_image != NULL) {

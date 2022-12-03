@@ -12,10 +12,13 @@ using namespace FEHIcon;
 
 int highScore1 = 0, highScore2 = 0, highScore3 = 0, totalEnemiesKilled = 0, totalShots = 0, totalDeaths = 0;
 
-/*
-    Play Game Function
-*/
 
+/*
+    Prompts user to select the difficulty at which to play the game
+
+    Parameters: none
+    Return value: the difficulty (0: easy, 1: medium, 2: hard, 3: extreme)
+*/
 int SelectDifficulty() {
     // Create buttons
     Icon easyButton, mediumButton, hardButton, extremeButton;
@@ -86,6 +89,12 @@ int SelectDifficulty() {
     }
 }
 
+/*
+    Sets up and runs the game
+
+    Parameters: none
+    Return value: none
+*/
 void Play(){
     // Prompt for difficulty level
     int difficulty = SelectDifficulty();
@@ -154,9 +163,11 @@ void Play(){
 }
 
 /*
-    Menu Functions
-*/
+    Displays the statistics
 
+    Parameters: none
+    Return value: none
+*/
 void Statistics() {
     Icon backButton;
     char backString[] = "Back";
@@ -200,6 +211,12 @@ void Statistics() {
     }
 }
 
+/*
+    Displays the instructions on how to play the game
+
+    Parameters: none
+    Return value: none
+*/
 void Instructions() {
     Icon backButton;
     char backString[] = "Back";
@@ -243,6 +260,12 @@ void Instructions() {
     }
 }
 
+/*
+    Displays the credits
+
+    Parameters: none
+    Return value: none
+*/
 void Credits() {
     Icon backButton;
     char backString[] = "Back";
@@ -286,6 +309,12 @@ void Credits() {
     }
 }
 
+/*
+    Displays the main menu
+
+    Parameters: none
+    Return value: none
+*/
 void Menu() {
     // Icons for all the menu options
     Icon playButton;
@@ -359,7 +388,12 @@ void Menu() {
     }
 }
 
-/* Entry point to the application */
+/* 
+    Entry point to the application
+
+    Parameters: none
+    Return value: 0
+*/
 int main() {
     // Draws the menu
     Menu();

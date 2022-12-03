@@ -3,13 +3,35 @@
 #include <vector2d.h>
 #include "image.h"
 
+// Forward declaration of Game class
 class Game;
 
+/*
+    Enemy Class: 
+
+    Contains variables that stores:
+        game: pointer to game object
+        width: the width of the object on the screen
+        height: the height of the object on the screen
+        pos: the position of the object on the screen
+        vel: the velocity that the object is moving at
+        force: the force that is being exterted on the object
+        mass: the mass of the enemy
+        enemyImage: the image that the enemy is rendered as
+
+    Contains methods that:
+        Enemy(float, float, float): creates a enemy given the arguments
+        getCenter(): returns the position of the center of the enemy
+        pointInEnemy(int, int): returns whether the coordinate given in the arguments is within the rectangle bounding box for the enemy
+        update(): updates the position, velocities, and forces of the enemy
+        render(): draws the object on the screen
+        shoot(): shoots a tracker bullet from the enemy
+*/
 class Enemy {
     public:
         Game *game;
         const static int width = 15, height = 15;
-        Vector2D pos, vel, force, velG, forceG;
+        Vector2D pos, vel, force;
         float mass;
         Image enemyImage;
 

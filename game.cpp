@@ -9,6 +9,14 @@
 #define WINDOW_HEIGHT 240
 #define PI 3.1415
 
+/*
+    Creates and sets up the game based on the difficulty passed as a parameter
+
+    Parameters:
+        diff: the difficulty level of the game
+
+    Return value: none
+*/
 Game::Game(int diff) {
     player.game = this;
     lastEnemySpawnTime = -1;
@@ -16,7 +24,6 @@ Game::Game(int diff) {
     score = 0;
     numEnemiesKilled = 0;
     numShots = 0;
-    numDeaths = 0;
     
     difficulty = diff;
 
@@ -53,6 +60,12 @@ Game::Game(int diff) {
     backgroundImageY = 0;
 }
 
+/*
+    Draws the game and game objects to the screen
+
+    Parameters: none
+    Return value: none
+*/
 void Game::render() {
     LCD.Clear();
 
@@ -100,6 +113,12 @@ void Game::render() {
     LCD.Update();
 }
 
+/*
+    Updates the game variables and game objects
+
+    Parameters: none
+    Return value: none
+*/
 void Game::update() {
     // Update player object
     player.update();
@@ -161,6 +180,12 @@ void Game::update() {
     }
 }
 
+/*
+    Spawns an enemy
+
+    Parameters: none
+    Return value: none
+*/
 void Game::spawnEnemy() {
     float initialX, initialY, angle;
 
@@ -190,6 +215,12 @@ void Game::spawnEnemy() {
     enemies.push_back(Enemy(initialX, initialY, angle, this));
 }
 
+/*
+    Handles collisions between game objects
+
+    Parameters: none
+    Return value: none
+*/
 void Game::handleCollisions() {
     // Stores player's image array
     int *playerImageArray = player.playerImage.saved_image;
@@ -317,6 +348,12 @@ void Game::handleCollisions() {
     }
 }
 
+/*
+    Checks if player is out of bounds and if so, sets their position to a close point on the edge and ends the game
+
+    Parameters: none
+    Return value: none
+*/
 void Game::playerOutOfBounds() {
     if (player.pos.x <= 1) {
         player.pos.x = 1;

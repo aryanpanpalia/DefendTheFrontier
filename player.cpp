@@ -8,6 +8,12 @@
 #define WINDOW_WIDTH 320
 #define WINDOW_HEIGHT 240
 
+/*
+    Creates a player
+
+    Parameters: none
+    Return value: none
+*/
 Player::Player() {
     width = 12;
     height = 20;
@@ -25,14 +31,35 @@ Player::Player() {
     playerImage.Open("Player.pic");
 }
 
+/*
+    Returns a vector with the position of the center of the object
+
+    Parameters: none
+    Return value: Vector2D object containing position of the center of the object
+*/
 Vector2D Player::getCenter() {
     return Vector2D(pos.x + width / 2, pos.y + height / 2);
 }
 
+/*
+    Returns a boolean of whether the point is within the rectangular bounding box for the object
+
+    Parameters:
+        px: x position
+        py: y position
+
+    Return value: boolean of whether the point is within the rectangular bounding box for the object
+*/
 bool Player::pointInPlayer(int px, int py) {
     return pos.x <= px && px <= pos.x + width && pos.y <= py && py <= pos.y + height;
 }
 
+/*
+    Updates the position, velocities, and forces of the player
+
+    Parameters: none
+    Return value: none
+*/
 void Player::update() {
     Vector2D drag(0, 0);
 
@@ -78,6 +105,14 @@ void Player::update() {
     }
 }
 
+/*
+    Shoots a bullet from the player at the given angle
+
+    Parameters:
+        angle: angle to shoot the bullet at
+
+    Return value: none
+*/
 void Player::shoot(float angle) {
     // if player has ammo
     if (ammo > 0) {
@@ -108,6 +143,12 @@ void Player::shoot(float angle) {
     }
 }
 
+/*
+    Draws the object on the screen
+
+    Parameters: none
+    Return value: none
+*/
 void Player::render() {
     playerImage.Draw(pos.x, pos.y);
     LCD.SetFontColor(WHITE);
