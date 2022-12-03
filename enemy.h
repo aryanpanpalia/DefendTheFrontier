@@ -32,7 +32,7 @@ class Game;
 class Enemy {
     public:
         Game *game;
-        const static int width = 15, height = 15;
+        int width = 15, height = 15;
         Vector2D pos, vel, force;
         float mass;
         Image enemyImage;

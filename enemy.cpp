@@ -23,6 +23,8 @@ Enemy::Enemy(float initialX, float initialY, float a, Game *g) {
     vel = Vector2D(cos(a), -sin(a));
 
     enemyImage.Open("Enemy.pic");
+    width = enemyImage.cols;
+    height = enemyImage.rows;
 }
 
 /*

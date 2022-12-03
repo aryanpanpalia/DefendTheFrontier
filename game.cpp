@@ -197,23 +197,25 @@ void Game::update() {
 void Game::spawnEnemy() {
     float initialX, initialY, angle;
 
+    Enemy tempEnemy(0, 0, 0, this);
+
     int side = rand() % 4;
     switch(side) {
         case 0:
-            initialX = 320 - Enemy::width;
-            initialY = (rand() % (240 - Enemy::height));
+            initialX = WINDOW_WIDTH - tempEnemy.width - 1;
+            initialY = rand() % (WINDOW_HEIGHT - tempEnemy.height - 1);
             break;
         case 1:
-            initialX = (rand() % (320 - Enemy::width));
-            initialY = 0;
+            initialX = rand() % (WINDOW_WIDTH - tempEnemy.width - 1);
+            initialY = 1;
             break;
         case 2:
-            initialX = 0;
-            initialY = (rand() % (240 - Enemy::height));
+            initialX = 1;
+            initialY = (rand() % (WINDOW_HEIGHT - tempEnemy.height - 1));
             break;
         case 3:
-            initialX = (rand() % 320 - Enemy::width);
-            initialY = 220;
+            initialX = rand() % (320 - tempEnemy.width - 1);
+            initialY = WINDOW_HEIGHT - tempEnemy.height - 1;
             break;
     }
 
