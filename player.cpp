@@ -17,8 +17,9 @@
     Authors: Aryan Panpalia
 */
 Player::Player() {
-    width = 12;
-    height = 20;
+    playerImage.Open("Player.pic");
+    width = playerImage.cols;
+    height = playerImage.rows;
 
     pos = Vector2D((WINDOW_WIDTH - width) / 2, (WINDOW_HEIGHT - height) / 2);
     vel = Vector2D(0, 0);
@@ -29,8 +30,6 @@ Player::Player() {
 
     mass = 10;
     ammo = 10;
-
-    playerImage.Open("Player.pic");
 }
 
 /*

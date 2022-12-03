@@ -40,9 +40,7 @@ Bullet::Bullet(float initialX, float initialY, float a) {
     width = bulletImages[0].cols;
     height = bulletImages[0].rows;
 
-    for (int i = 0; i < 4; i++) {
-        imageIndex = rand() % 4;
-    }
+    imageIndex = rand() % 4;
 }
 
 /*

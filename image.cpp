@@ -1,6 +1,6 @@
 // Code by Ben Grier with help from Clayton Greenbaum
 // Code modified by Aryan Panpalia
-#include <Image.h>
+#include <image.h>
 
 #define WINDOW_WIDTH 320
 #define WINDOW_HEIGHT 240
