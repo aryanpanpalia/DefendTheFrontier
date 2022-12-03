@@ -138,6 +138,11 @@ void Game::update() {
 
         // If the bullet touches the edge, remove it from bullets vector
         if(bullet.pos.x <= 0 || bullet.pos.x >= WINDOW_WIDTH - bullet.width || bullet.pos.y <= 0 || bullet.pos.y >= WINDOW_HEIGHT - bullet.height) {
+            // Close the bullet images
+            for(int c = 0; c < 4; c++) {
+                bullet.bulletImages[c].Close();
+            }
+
             bullets.erase(bullets.begin() + i, bullets.begin() + i + 1);
             i--;
         }
@@ -152,6 +157,9 @@ void Game::update() {
 
         // If an enemy exits the screen, remove it from the enemies vector
         if(enemy.pos.x <= 0 || enemy.pos.x >= WINDOW_WIDTH - enemy.width || enemy.pos.y <= 0 || enemy.pos.y >= WINDOW_HEIGHT - enemy.height) {
+            // Close the enemy image
+            enemy.enemyImage.Close();
+            
             enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
             i--;
         } 
@@ -166,6 +174,11 @@ void Game::update() {
 
         // If the trackerBullet touches the edge, remove it from trackerBullets vector
         if(trackerBullet.pos.x <= 0 || trackerBullet.pos.x >= WINDOW_WIDTH - trackerBullet.width || trackerBullet.pos.y <= 0 || trackerBullet.pos.y >= WINDOW_HEIGHT - trackerBullet.height) {
+            // Close the tracker bullet images
+            for(int c = 0; c < 2; c++) {
+                trackerBullet.trackerBulletImages[c].Close();
+            }
+            
             trackerBullets.erase(trackerBullets.begin() + i, trackerBullets.begin() + i + 1);
             i--;
         }
@@ -259,7 +272,7 @@ void Game::handleCollisions() {
                     int enemyCol = x - enemy.pos.x;
 
                     // Checks if both image arrays contain a drawn pixel at this (x, y)
-                    if(enemyImageArray[enemyRow * enemy.height + enemyCol] != -1 && playerImageArray[playerRow * player.height + playerCol] != -1) {
+                    if(enemyImageArray[enemyRow * enemy.width + enemyCol] != -1 && playerImageArray[playerRow * player.width + playerCol] != -1) {
                         gameOver = true;
                         break;
                     }
@@ -291,7 +304,15 @@ void Game::handleCollisions() {
                         int enemyCol = x - enemy.pos.x;
 
                         // Checks if both image arrays contain a drawn pixel at this (x, y)
-                        if(enemyImageArray[enemyRow * enemy.height + enemyCol] != -1 && bulletImageArray[bulletRow * bullet.height + bulletCol] != -1) {
+                        if(enemyImageArray[enemyRow * enemy.width + enemyCol] != -1 && bulletImageArray[bulletRow * bullet.width + bulletCol] != -1) {
+                            // Close the enemy image
+                            enemy.enemyImage.Close();
+                            
+                            // Close the bullet images
+                            for(int c = 0; c < 4; c++) {
+                                bullet.bulletImages[c].Close();
+                            }
+
                             // Remove both the bullet and the enemy
                             enemies.erase(enemies.begin() + i, enemies.begin() + i + 1);
                             bullets.erase(bullets.begin() + j, bullets.begin() + j + 1);
@@ -338,11 +359,16 @@ void Game::handleCollisions() {
                     int trackerBulletCol = x - trackerBullet.pos.x;
 
                     // Checks if both image arrays contain a drawn pixel at this (x, y)
-                    if(trackerBulletImageArray[trackerBulletRow * trackerBullet.height + trackerBulletCol] != -1 && playerImageArray[playerRow * player.height + playerCol] != -1) {
-                        // Reset's player's force and set's its velocity to the trackerBullet's
+                    if(trackerBulletImageArray[trackerBulletRow * trackerBullet.width + trackerBulletCol] != -1 && playerImageArray[playerRow * player.width + playerCol] != -1) {
+                        // Closes the tracker bullet images
+                        for(int c = 0; c < 2; c++) {
+                            trackerBullet.bulletImages[c].Close();
+                        }
+                        
                         if(trackerBulletsKill) {
                             gameOver = true;
                         } else {
+                            // Reset's player's force and set's its velocity to the trackerBullet's
                             player.force.reset();
                             player.vel = player.vel.add(trackerBullets[i].vel.norm().mult(knockBack));
 

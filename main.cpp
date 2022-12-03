@@ -150,6 +150,28 @@ void Play(){
         game.render();
     }
 
+    // Close game's background image
+    game.backgroundImage.Close();
+    
+    // Close all the bullet images
+    for(int i = 0; i < game.bullets.size(); i++) {
+        for(int j = 0; j < 4; j++) {
+            game.bullets[i].bulletImages[j].Close();
+        }
+    }
+
+    // Close all the enemy images
+    for(int i = 0; i < game.enemies.size(); i++) {
+        game.enemies[i].enemyImage.Close();
+    }
+
+    // Close all the tracker bullet images
+    for(int i = 0; i < game.trackerBullets.size(); i++) {
+        for(int j = 0; j < 2; j++) {
+            game.trackerBullets[i].trackerBulletImages[j].Close();
+        }
+    }
+
     if (game.score > highScore1) {
         highScore3 = highScore2;
         highScore2 = highScore1;
