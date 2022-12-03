@@ -18,6 +18,8 @@
 		Open(const char*): opens an image
 		Draw(int, int): draws an image to the screen
 		Close(): closes an image
+
+	Authors: Ben Grier, Clayton Greenbaum, Aryan Panpalia
 */
 class Image
 {

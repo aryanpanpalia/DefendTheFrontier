@@ -18,6 +18,8 @@
         norm(): returns the norm of the vector
         set(float, float): sets the x and y components to those passed as arguments
         reset(): resets the x and y components to 0
+
+    Authors: Aryan Panpalia
 */
 class Vector2D {
     public:

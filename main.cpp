@@ -18,6 +18,8 @@ int highScore1 = 0, highScore2 = 0, highScore3 = 0, totalEnemiesKilled = 0, tota
 
     Parameters: none
     Return value: the difficulty (0: easy, 1: medium, 2: hard, 3: extreme)
+
+    Authors: Aryan Panpalia
 */
 int SelectDifficulty() {
     // Create buttons
@@ -94,6 +96,8 @@ int SelectDifficulty() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 void Play(){
     // Prompt for difficulty level
@@ -167,6 +171,8 @@ void Play(){
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 void Statistics() {
     Icon backButton;
@@ -216,6 +222,8 @@ void Statistics() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 void Instructions() {
     Icon backButton;
@@ -265,6 +273,8 @@ void Instructions() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 void Credits() {
     Icon backButton;
@@ -314,6 +324,8 @@ void Credits() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 void Menu() {
     // Icons for all the menu options
@@ -393,6 +405,8 @@ void Menu() {
 
     Parameters: none
     Return value: 0
+
+    Authors: Aryan Panpalia
 */
 int main() {
     // Draws the menu

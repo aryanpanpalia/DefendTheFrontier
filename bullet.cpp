@@ -7,6 +7,8 @@
 
 /*
     No argument constructor for the Bullet class
+
+    Authors: Thomas Banko
 */
 Bullet::Bullet(){}
 
@@ -19,6 +21,8 @@ Bullet::Bullet(){}
         a: angle for the bullet to move at
 
     Return value: none
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 
 Bullet::Bullet(float initialX, float initialY, float a) {
@@ -46,6 +50,8 @@ Bullet::Bullet(float initialX, float initialY, float a) {
 
     Parameters: none
     Return value: Vector2D object containing position of the center of the object
+
+    Authors: Aryan Panpalia
 */
 Vector2D Bullet::getCenter() {
     Vector2D center(pos.x + width / 2, pos.y + height / 2);
@@ -60,6 +66,8 @@ Vector2D Bullet::getCenter() {
         py: y position
 
     Return value: boolean of whether the point is within the rectangular bounding box for the object
+
+    Authors: Aryan Panpalia
 */
 bool Bullet::pointInBullet(int px, int py) {
     return pos.x <= px && px <= pos.x + width && pos.y <= py && py <= pos.y + height;
@@ -70,6 +78,8 @@ bool Bullet::pointInBullet(int px, int py) {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 void Bullet::update() {
     // Updates x and y position
@@ -81,6 +91,8 @@ void Bullet::update() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 void Bullet::render() {
     if(frameCount % 10 == 0) {
@@ -102,6 +114,8 @@ void Bullet::render() {
         initialX: initial x position
         initialY: initial y position
         p: pointer to player object
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p){
     pos = Vector2D(initialX, initialY);
@@ -128,6 +142,8 @@ TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p){
 
     Parameters: none
     Return value: none
+
+    Authors: Thomas Banko
 */
 void TrackerBullet::update() {
     Vector2D force = player->pos.sub(pos).norm();
@@ -140,6 +156,8 @@ void TrackerBullet::update() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 void TrackerBullet::render() {
     if(frameCount % 10 == 0) {

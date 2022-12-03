@@ -25,6 +25,8 @@
         pointInBullet(int, int): returns whether the coordinate given in the arguments is within the rectangle bounding box for the bullet
         update(): updates the position, velocities, and forces of the bullet
         render(): draws the object on the screen
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 class Bullet {
     public:
@@ -57,6 +59,8 @@ class Player;
         TrackerBullet(float, float, Player*): creates a tracker bullet given the arguments
         update(): updates the position, velocities, and forces of the tracker bullet
         render(): draws the object on the screen
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 class TrackerBullet: public Bullet {
     public:

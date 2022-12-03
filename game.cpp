@@ -16,6 +16,8 @@
         diff: the difficulty level of the game
 
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 Game::Game(int diff) {
     player.game = this;
@@ -65,6 +67,8 @@ Game::Game(int diff) {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 void Game::render() {
     LCD.Clear();
@@ -118,6 +122,8 @@ void Game::render() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 void Game::update() {
     // Update player object
@@ -185,6 +191,8 @@ void Game::update() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 void Game::spawnEnemy() {
     float initialX, initialY, angle;
@@ -220,6 +228,8 @@ void Game::spawnEnemy() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia and Thomas Banko
 */
 void Game::handleCollisions() {
     // Stores player's image array
@@ -353,6 +363,8 @@ void Game::handleCollisions() {
 
     Parameters: none
     Return value: none
+
+    Authors: Thomas Banko
 */
 void Game::playerOutOfBounds() {
     if (player.pos.x <= 1) {

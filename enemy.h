@@ -26,6 +26,8 @@ class Game;
         update(): updates the position, velocities, and forces of the enemy
         render(): draws the object on the screen
         shoot(): shoots a tracker bullet from the enemy
+
+        Authors: Aryan Panpalia
 */
 class Enemy {
     public:

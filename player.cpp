@@ -13,6 +13,8 @@
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 Player::Player() {
     width = 12;
@@ -36,6 +38,8 @@ Player::Player() {
 
     Parameters: none
     Return value: Vector2D object containing position of the center of the object
+
+    Authors: Aryan Panpalia
 */
 Vector2D Player::getCenter() {
     return Vector2D(pos.x + width / 2, pos.y + height / 2);
@@ -49,6 +53,8 @@ Vector2D Player::getCenter() {
         py: y position
 
     Return value: boolean of whether the point is within the rectangular bounding box for the object
+
+    Authors: Aryan Panpalia
 */
 bool Player::pointInPlayer(int px, int py) {
     return pos.x <= px && px <= pos.x + width && pos.y <= py && py <= pos.y + height;
@@ -59,6 +65,8 @@ bool Player::pointInPlayer(int px, int py) {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 void Player::update() {
     Vector2D drag(0, 0);
@@ -112,6 +120,8 @@ void Player::update() {
         angle: angle to shoot the bullet at
 
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 void Player::shoot(float angle) {
     // if player has ammo
@@ -148,6 +158,8 @@ void Player::shoot(float angle) {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 void Player::render() {
     playerImage.Draw(pos.x, pos.y);

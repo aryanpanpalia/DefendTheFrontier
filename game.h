@@ -35,6 +35,8 @@
         spawnEnemy(): spawns an enemy
         playerOutOfBounds: checks if player is out of bounds and if so, sets their position to a close point on the edge and ends the game
         handleCollisions: handles collisions between game objects
+
+        Authors: Aryan Panpalia
 */
 class Game {
     public:

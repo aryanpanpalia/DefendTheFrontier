@@ -29,6 +29,8 @@ class Game;
         update(): updates the position, velocities, and forces of the player
         shoot(): shoots a bullet from the player at the given angle
         render(): draws the object on the screen
+
+    Authors: Aryan Panpalia
 */
 class Player {
     public:

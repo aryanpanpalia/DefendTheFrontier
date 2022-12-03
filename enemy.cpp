@@ -13,6 +13,8 @@
         g: pointer to game object
 
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 Enemy::Enemy(float initialX, float initialY, float a, Game *g) {
     game = g;
@@ -28,6 +30,8 @@ Enemy::Enemy(float initialX, float initialY, float a, Game *g) {
 
     Parameters: none
     Return value: Vector2D object containing position of the center of the object
+
+    Authors: Aryan Panpalia
 */
 Vector2D Enemy::getCenter() {
     Vector2D center(pos.x + width / 2, pos.y + height / 2);
@@ -42,6 +46,8 @@ Vector2D Enemy::getCenter() {
         py: y position
 
     Return value: boolean of whether the point is within the rectangular bounding box for the object
+
+    Authors: Aryan Panpalia
 */
 bool Enemy::pointInEnemy(int px, int py) {
     return pos.x <= px && px <= pos.x + width && pos.y <= py && py <= pos.y + height;
@@ -52,6 +58,8 @@ bool Enemy::pointInEnemy(int px, int py) {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 void Enemy::update() {
     // Updates x and y position
@@ -63,6 +71,8 @@ void Enemy::update() {
 
     Parameters: none
     Return value: none
+
+    Authors: Aryan Panpalia
 */
 void Enemy::render() {
     enemyImage.Draw(pos.x, pos.y);
@@ -74,6 +84,8 @@ void Enemy::render() {
 
     Parameters: none
     Return value: none
+
+    Authors: Thomas Banko
 */
 void Enemy::shoot() {
     Vector2D center = getCenter();

@@ -10,6 +10,8 @@
 
 	Parameters: none
 	Return value: none
+
+	Authors: Ben Grier, Clayton Greenbaum
 */
 Image::Image()
 {
@@ -25,6 +27,8 @@ Image::Image()
 		filename: file output by MATLAB to draw that ends in a .pic
 
 	Return value: none
+
+	Authors: Ben Grier, Clayton Greenbaum
 */
 void Image::Open(const char *filename)
 {
@@ -71,6 +75,8 @@ void Image::Open(const char *filename)
 	Parameters:
 		x: x position of top left corner of where the draw the picture
 		y: y position of top left corner of where the draw the picture
+
+	Authors: Ben Grier, Clayton Greenbaum, Aryan Panpalia
 */
 void Image::Draw(int x, int y)
 {
@@ -95,6 +101,8 @@ void Image::Draw(int x, int y)
 
 	Parameters: none
 	Return value: none
+
+	Authors: Ben Grier, Clayton Greenbaum, Thomas Banko
 */
 void Image::Close()
 {
