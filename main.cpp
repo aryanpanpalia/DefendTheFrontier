@@ -115,7 +115,7 @@ int SelectTheme() {
     int westernStartX = spaceStartX + buttonWidth + buffer;
     int westernStartY = spaceStartY;
 
-    spaceButton.SetProperties(spaceString, spaceStartX, spaceStartY, buttonWidth, buttonHeight, PURPLE, WHITE);
+    spaceButton.SetProperties(spaceString, spaceStartX, spaceStartY, buttonWidth, buttonHeight, BLUEVIOLET, WHITE);
     westernButton.SetProperties(westernString, westernStartX, westernStartY, buttonWidth, buttonHeight, ORANGE, WHITE);
 
     float x, y;
@@ -125,7 +125,7 @@ int SelectTheme() {
 
         LCD.WriteAt("SELECT YOUR FRONTIER", 40, 20);
 
-        LCD.SetFontColor(PURPLE);
+        LCD.SetFontColor(BLUEVIOLET);
         LCD.FillRectangle(spaceStartX, spaceStartY, buttonWidth, buttonHeight);
         spaceButton.Draw();
 
@@ -209,6 +209,7 @@ void Play(){
 
     // Close game's background image
     game.backgroundImage.Close();
+    game.player.playerImage.Close();
     
     // Close all the bullet images
     for(int i = 0; i < game.bullets.size(); i++) {

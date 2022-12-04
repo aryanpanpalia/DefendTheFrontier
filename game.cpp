@@ -89,22 +89,22 @@ void Game::render() {
     backgroundImageX--;
     backgroundImageX %= backgroundImage.cols;
 
-    LCD.SetFontColor(WHITE);
-    LCD.DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    for(Bullet &bullet: bullets) {
+        bullet.render();
+    }
 
     player.render();
 
-    for(Bullet &bullet: bullets) {
-        bullet.render();
+    for(TrackerBullet &trackerBullet: trackerBullets) {
+        trackerBullet.render();
     }
 
     for(Enemy &enemy: enemies) {
         enemy.render();
     }
 
-    for(TrackerBullet &trackerBullet: trackerBullets) {
-        trackerBullet.render();
-    }
+    LCD.SetFontColor(WHITE);
+    LCD.DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     LCD.WriteAt("Ammo: ", 5, 5);
     LCD.WriteAt(player.ammo, 65, 5);
