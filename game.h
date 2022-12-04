@@ -24,6 +24,7 @@
         knockback: how far trackerBullets will knock the player back
         ammoPerKill: the amount of ammo the player gets upon killing an enemy
         timeBetweenEnemySpawns: the amount of time between enemy spawns
+        theme: the theme of the game (0: space, 1: western)
         backgroundImage: the background image for the game
         backgroundImageX: the x position the background image will be rendered at
         backgroundImageY: the y position the background image will be rendered at
@@ -58,10 +59,12 @@ class Game {
         int ammoPerKill;
         int timeBetweenEnemySpawns;
 
+        int theme;
+
         Image backgroundImage;
         int backgroundImageX, backgroundImageY;
 
-        Game(int diff);
+        Game(int diff, int thm);
         void render();
         void update();
         void spawnEnemy();

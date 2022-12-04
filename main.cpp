@@ -92,6 +92,62 @@ int SelectDifficulty() {
 }
 
 /*
+    Prompts user to select the theme of the game
+
+    Parameters: none
+    Return value: the theme (0: space, 1: western)
+*/
+int SelectTheme() {
+    // Create buttons
+    Icon spaceButton, westernButton;
+    char spaceString[] = "Space";
+    char westernString[] = "Western";
+
+    // Setting button width, height, and buffer between them as constants
+    int buttonWidth = 100;
+    int buttonHeight = 100;
+    int buffer = 10;
+
+    // Initial XY positions of the buttons   
+    int spaceStartX = (WINDOW_WIDTH - (buttonWidth * 2 + buffer)) / 2;
+    int spaceStartY = (WINDOW_HEIGHT - (buttonHeight + buffer)) / 2;
+
+    int westernStartX = spaceStartX + buttonWidth + buffer;
+    int westernStartY = spaceStartY;
+
+    spaceButton.SetProperties(spaceString, spaceStartX, spaceStartY, buttonWidth, buttonHeight, PURPLE, WHITE);
+    westernButton.SetProperties(westernString, westernStartX, westernStartY, buttonWidth, buttonHeight, ORANGE, WHITE);
+
+    float x, y;
+    while(true) {
+        // Clears the screen then draws all the buttons
+        LCD.Clear();
+
+        LCD.WriteAt("SELECT YOUR FRONTIER", 40, 20);
+
+        LCD.SetFontColor(PURPLE);
+        LCD.FillRectangle(spaceStartX, spaceStartY, buttonWidth, buttonHeight);
+        spaceButton.Draw();
+
+        LCD.SetFontColor(ORANGE);
+        LCD.FillRectangle(westernStartX, westernStartY, buttonWidth, buttonHeight);
+        westernButton.Draw();
+
+        // Waits for someone to touch the screen
+        while(!LCD.Touch(&x, &y));
+
+        // Waits for someone to release their touch
+        while(LCD.Touch(&x, &y));
+
+        if(spaceStartX < x && x < spaceStartX + buttonWidth && spaceStartY < y && y < spaceStartY + buttonHeight) {
+            return 0;
+        } else if(westernStartX < x && x < westernStartX + buttonWidth && westernStartY < y && y < westernStartY + buttonHeight) {
+            return 1;
+        }
+    }
+}
+
+/*
     Sets up and runs the game
 
     Parameters: none
@@ -102,6 +158,7 @@ int SelectDifficulty() {
 void Play(){
     // Prompt for difficulty level
     int difficulty = SelectDifficulty();
+    int theme = SelectTheme();
 
     // Stores whether the screen is being pressed
     bool pressed = false;
@@ -110,7 +167,7 @@ void Play(){
     float x, y;
 
     // Game object
-    Game game(difficulty);
+    Game game(difficulty, theme);
 
     // Alias/Reference to game's player object
     Player &player = game.player;

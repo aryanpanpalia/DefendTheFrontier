@@ -17,6 +17,7 @@
         Image(): creates the image object
 		Open(const char*): opens an image
 		Draw(int, int): draws an image to the screen
+		Rotate180(): rotates image 180 degrees
 		Close(): closes an image
 
 	Authors: Ben Grier, Clayton Greenbaum, Aryan Panpalia
@@ -29,5 +30,6 @@ class Image
 		Image();
 		void Open(const char *);
 		void Draw(int, int);
+		void Rotate180();
 		void Close();
 };

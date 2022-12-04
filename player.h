@@ -21,9 +21,10 @@ class Game;
         mass: the mass of the bullet
         ammo: amount of ammo the player has available to shoot
         playerImage: the image that the player is rendered as
+        theme: the theme of the player
 
     Contains methods that:
-        Player(): creates a player
+        Player(int): creates a player based on the theme passed as an argument
         getCenter(): returns the position of the center of the player
         pointInPlayer(int, int): returns whether the coordinate given in the arguments is within the rectangle bounding box for the player
         update(): updates the position, velocities, and forces of the player
@@ -40,8 +41,9 @@ class Player {
         float mass;
         int ammo;
         Image playerImage;
+        int theme;
         
-        Player();
+        Player(int theme);
         Vector2D getCenter();
         bool pointInPlayer(int px, int py);
         void update();

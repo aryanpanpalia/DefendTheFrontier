@@ -97,6 +97,33 @@ void Image::Draw(int x, int y)
 }
 
 /*
+	Rotates image 180 degrees
+
+	Parameters: none
+	Return value: none
+
+	Authors: Aryan Panpalia
+*/
+void Image::Rotate180() {
+	int *newImage = (int*)malloc(sizeof(int) * rows * cols);
+
+	for (int oldRow = 0; oldRow < rows; oldRow++)
+	{
+		for (int oldCol = 0; oldCol < cols; oldCol++)
+		{
+			int newRow = rows - oldRow - 1;
+			int newCol = cols - oldCol - 1;
+			newImage[newRow * cols + newCol] = saved_image[oldRow * cols + oldCol];
+		}
+	}
+
+	if (saved_image != NULL) {
+		free(saved_image);
+	}
+	saved_image = newImage;
+}
+
+/*
 	Closes an image and prevents memory leak issues after malloc
 
 	Parameters: none

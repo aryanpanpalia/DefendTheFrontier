@@ -11,13 +11,22 @@
 /*
     Creates a player
 
-    Parameters: none
+    Parameters:
+        thm: the theme of the game
+
     Return value: none
 
     Authors: Aryan Panpalia
 */
-Player::Player() {
-    playerImage.Open("Player.pic");
+Player::Player(int thm) {
+    theme = thm;
+
+    if(theme == 0) {
+        playerImage.Open("SpacePlayer.pic");
+    } else if(theme == 1) {
+        playerImage.Open("WesternPlayer.pic");
+    }
+    
     width = playerImage.cols;
     height = playerImage.rows;
 
@@ -143,7 +152,7 @@ void Player::shoot(float angle) {
 
         // Append Bullet shooting away from player to game object's bullet vector
         Vector2D center = getCenter();
-        game->bullets.push_back(Bullet(center.x, center.y, angle));
+        game->bullets.push_back(Bullet(center.x, center.y, angle, theme));
 
         // decrement ammo
         ammo--;

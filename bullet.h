@@ -38,7 +38,7 @@ class Bullet {
         int frameCount, imageIndex;
 
         Bullet();
-        Bullet(float initialX, float initialY, float angle);
+        Bullet(float initialX, float initialY, float angle, int theme);
         Vector2D getCenter();
         bool pointInBullet(int px, int py);
         void update();
@@ -67,7 +67,7 @@ class TrackerBullet: public Bullet {
         Player *player;
         Image trackerBulletImages[2];
 
-        TrackerBullet(float initialX, float initialY, Player *player);
+        TrackerBullet(float initialX, float initialY, Player *player, int theme);
         void update();
         void render();
 };

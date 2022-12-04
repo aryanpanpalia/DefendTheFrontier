@@ -10,16 +10,17 @@
 #define PI 3.1415
 
 /*
-    Creates and sets up the game based on the difficulty passed as a parameter
+    Creates and sets up the game based on the difficulty and theme passed as parameters
 
     Parameters:
         diff: the difficulty level of the game
+        thm: the theme of the game
 
     Return value: none
 
     Authors: Aryan Panpalia
 */
-Game::Game(int diff) {
+Game::Game(int diff, int thm) : player(thm) {
     player.game = this;
     lastEnemySpawnTime = -1;
     gameOver = false;
@@ -57,7 +58,14 @@ Game::Game(int diff) {
         timeBetweenEnemySpawns = 1;
     }
 
-    backgroundImage.Open("Background.pic");
+    theme = thm;
+
+    if(theme == 0) {
+        backgroundImage.Open("SpaceBackground.pic");
+    } else if (theme == 1) { 
+        backgroundImage.Open("WesternBackground.pic");
+    }
+
     backgroundImageX = 0; 
     backgroundImageY = 0;
 }

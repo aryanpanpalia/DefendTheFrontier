@@ -22,7 +22,14 @@ Enemy::Enemy(float initialX, float initialY, float a, Game *g) {
     pos = Vector2D(initialX, initialY);
     vel = Vector2D(cos(a), -sin(a));
 
-    enemyImage.Open("Enemy.pic");
+    if(game->theme == 0) {
+        enemyImage.Open("SpaceEnemy.pic");
+    } else if(game->theme == 1) {
+        char fname[50];
+        snprintf(fname, 50, "Bandit_%d.pic", (rand() % 2) + 1);
+        enemyImage.Open(fname);
+    }
+    
     width = enemyImage.cols;
     height = enemyImage.rows;
 }
@@ -91,5 +98,5 @@ void Enemy::render() {
 */
 void Enemy::shoot() {
     Vector2D center = getCenter();
-    game->trackerBullets.push_back(TrackerBullet(center.x, center.y, &game->player));
+    game->trackerBullets.push_back(TrackerBullet(center.x, center.y, &game->player, game->theme));
 }

@@ -19,13 +19,14 @@ Bullet::Bullet(){}
         initialX: initial x position for the bullet
         initialY: initial y position for the bullet
         a: angle for the bullet to move at
+        theme: the game theme (0: space, 1: western)
 
     Return value: none
 
     Authors: Aryan Panpalia and Thomas Banko
 */
 
-Bullet::Bullet(float initialX, float initialY, float a) {
+Bullet::Bullet(float initialX, float initialY, float a, int theme) {
     pos = Vector2D(initialX, initialY);
     vel = Vector2D(3 * cos(a), -3 * sin(a));
     angle = a;
@@ -33,8 +34,23 @@ Bullet::Bullet(float initialX, float initialY, float a) {
     
     for(int i = 0; i < 4; i++) {
         char fname[50];
-        snprintf(fname, 50, "ElectroBall_%d.pic", i + 1);
-        bulletImages[i].Open(fname);
+        if(theme == 0) {
+            snprintf(fname, 50, "ElectroBall_%d.pic", i + 1);
+            bulletImages[i].Open(fname);
+        } else if(theme == 1) {
+            int angleInDegrees = (180 * angle) / PI;
+            int imageAngle = ((int) angleInDegrees / 10) * 10;
+
+            if(imageAngle > 0) {
+                snprintf(fname, 50, "bulletImages/Bullet%d.pic", imageAngle);
+                bulletImages[i].Open(fname);
+            } else {
+                imageAngle += 180;
+                snprintf(fname, 50, "bulletImages/Bullet%d.pic", imageAngle);
+                bulletImages[i].Open(fname);
+                bulletImages[i].Rotate180();
+            }
+        }
     }
 
     width = bulletImages[0].cols;
@@ -115,7 +131,7 @@ void Bullet::render() {
 
     Authors: Aryan Panpalia and Thomas Banko
 */
-TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p){
+TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p, int theme){
     pos = Vector2D(initialX, initialY);
     mass = 10;
     frameCount = 0;
@@ -125,7 +141,12 @@ TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p){
 
     for(int i = 0; i < 2; i++) {
         char fname[50];
-        snprintf(fname, 50, "EnemyBullet_%d.pic", i + 1);
+        if(theme == 0) {
+            snprintf(fname, 50, "SpaceEnemyBullet_%d.pic", i + 1);
+        } else if (theme == 1) { 
+            strcpy(fname, "WesternEnemyPellet.pic");
+        }
+        
         trackerBulletImages[i].Open(fname);
     }
 
@@ -133,6 +154,7 @@ TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p){
     height = trackerBulletImages[0].rows;
 
     imageIndex = 0;
+
 }
 
 /*
