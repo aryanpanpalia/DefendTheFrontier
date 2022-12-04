@@ -12,7 +12,6 @@ using namespace FEHIcon;
 
 int highScore1 = 0, highScore2 = 0, highScore3 = 0, totalEnemiesKilled = 0, totalShots = 0, totalDeaths = 0;
 
-
 /*
     Prompts user to select the difficulty at which to play the game
 
@@ -22,6 +21,19 @@ int highScore1 = 0, highScore2 = 0, highScore3 = 0, totalEnemiesKilled = 0, tota
     Authors: Aryan Panpalia
 */
 int SelectDifficulty() {
+    Icon backButton;
+    char backString[] = "Back";
+
+    // Setting button width and height as constants
+    int backButtonWidth = 60;
+    int backButtonHeight = 25;
+
+    // Initial XY position of back button    
+    int buttonStartX = 7;
+    int buttonStartY = WINDOW_HEIGHT - backButtonHeight - 10;
+
+    backButton.SetProperties(backString, buttonStartX, buttonStartY, backButtonWidth, backButtonHeight, RED, WHITE);
+
     // Create buttons
     Icon easyButton, mediumButton, hardButton, extremeButton;
     char easyString[] = "Easy";
@@ -35,7 +47,7 @@ int SelectDifficulty() {
     int buffer = 10;
 
     // Initial XY positions of the buttons   
-    int easyStartX = (WINDOW_WIDTH - (buttonWidth * 2 + buffer)) / 2;
+    int easyStartX = 20 + (WINDOW_WIDTH - (buttonWidth * 2 + buffer)) / 2;
     int easyStartY = (WINDOW_HEIGHT - (buttonHeight * 2 + buffer)) / 2;
 
     int mediumStartX = easyStartX + buttonWidth + buffer;
@@ -73,6 +85,10 @@ int SelectDifficulty() {
         LCD.FillRectangle(extremeStartX, extremeStartY, buttonWidth, buttonHeight);
         extremeButton.Draw();
 
+        LCD.SetFontColor(RED);
+        LCD.FillRectangle(buttonStartX, buttonStartY, backButtonWidth, backButtonHeight);
+        backButton.Draw();
+
         // Waits for someone to touch the screen
         while(!LCD.Touch(&x, &y));
 
@@ -87,6 +103,8 @@ int SelectDifficulty() {
             return 2;
         } else if(extremeStartX < x && x < extremeStartX + buttonWidth && extremeStartY < y && y < extremeStartY + buttonHeight) {
             return 3;
+        } else if(x >= buttonStartX && x <= buttonStartX + backButtonWidth && y >= buttonStartY && y <= buttonStartY + backButtonHeight){
+            return -1;
         }
     }
 }
@@ -98,6 +116,19 @@ int SelectDifficulty() {
     Return value: the theme (0: space, 1: western)
 */
 int SelectTheme() {
+    Icon backButton;
+    char backString[] = "Back";
+
+    // Setting button width and height as constants
+    int backButtonWidth = 60;
+    int backButtonHeight = 25;
+
+    // Initial XY position of back button    
+    int buttonStartX = 7;
+    int buttonStartY = WINDOW_HEIGHT - backButtonHeight - 10;
+
+    backButton.SetProperties(backString, buttonStartX, buttonStartY, backButtonWidth, backButtonHeight, RED, WHITE);
+
     // Create buttons
     Icon spaceButton, westernButton;
     char spaceString[] = "Space";
@@ -133,6 +164,10 @@ int SelectTheme() {
         LCD.FillRectangle(westernStartX, westernStartY, buttonWidth, buttonHeight);
         westernButton.Draw();
 
+        LCD.SetFontColor(RED);
+        LCD.FillRectangle(buttonStartX, buttonStartY, backButtonWidth, backButtonHeight);
+        backButton.Draw();
+
         // Waits for someone to touch the screen
         while(!LCD.Touch(&x, &y));
 
@@ -143,6 +178,8 @@ int SelectTheme() {
             return 0;
         } else if(westernStartX < x && x < westernStartX + buttonWidth && westernStartY < y && y < westernStartY + buttonHeight) {
             return 1;
+        } else if(x >= buttonStartX && x <= buttonStartX + backButtonWidth && y >= buttonStartY && y <= buttonStartY + backButtonHeight){
+            return -1;
         }
     }
 }
@@ -156,9 +193,14 @@ int SelectTheme() {
     Authors: Aryan Panpalia and Thomas Banko
 */
 void Play(){
+    // Prompt for theme
+    SELECTTHEME:;
+    int theme = SelectTheme();
+    if (theme == -1) return;
+
     // Prompt for difficulty level
     int difficulty = SelectDifficulty();
-    int theme = SelectTheme();
+    if (difficulty == -1) goto SELECTTHEME;
 
     // Stores whether the screen is being pressed
     bool pressed = false;
@@ -185,7 +227,6 @@ void Play(){
                 float dx = x - center.x;
                 float dy = center.y - y;
                 float angle = atan2(dy, dx);
-                
                 player.shoot(angle);
             }
         } 
@@ -209,7 +250,9 @@ void Play(){
 
     // Close game's background image
     game.backgroundImage.Close();
-    game.player.playerImage.Close();
+
+    // Close player image
+    player.playerImage.Close();
     
     // Close all the bullet images
     for(int i = 0; i < game.bullets.size(); i++) {
@@ -244,6 +287,8 @@ void Play(){
     totalEnemiesKilled += game.numEnemiesKilled;
     totalShots += game.numShots;
     totalDeaths += 1;
+
+    Sleep(1.0);
 }
 
 /*
@@ -408,6 +453,10 @@ void Credits() {
     Authors: Aryan Panpalia
 */
 void Menu() {
+    // Icon for title
+    Icon gameTitle;
+    char titleString[] = "Defend The Frontier";
+
     // Icons for all the menu options
     Icon playButton;
     char playString[] = "Play Game";
@@ -421,15 +470,22 @@ void Menu() {
     Icon viewCredits;
     char creditsString[] = "View Credits";
 
+    // Setting variables with title properties
+    int titleWidth = 270, titleHeight = 40;
+    int titleStartX = (WINDOW_WIDTH - titleWidth) / 2, titleStartY = 7;
+
     // Setting button width and height as constants
     int buttonWidth = 220;
-    int buttonHeight = 40;
-    
+    int buttonHeight = 35;
+
     // All buttons start at the same X position
     int buttonStartX = (WINDOW_WIDTH - buttonWidth) / 2;
 
     // Initial Y positions for all the buttons
-    int playStartY = 25, statsStartY = 75, instructionsStartY = 125, creditsStartY = 175;
+    int playStartY = 55, statsStartY = 100, instructionsStartY = 145, creditsStartY = 190;
+
+    // Sets properties for title
+    gameTitle.SetProperties(titleString, titleStartX, titleStartY, titleWidth, titleHeight, 10052885, BROWN);
 
     // Sets properties of all the buttons
     playButton.SetProperties(playString, buttonStartX, playStartY, buttonWidth, buttonHeight, GREEN, WHITE);
@@ -441,6 +497,9 @@ void Menu() {
     while(true){
         // Clears the screen then draws all the buttons
         LCD.Clear();
+        LCD.SetFontColor(16631342);
+        LCD.FillRectangle(titleStartX, titleStartY, titleWidth, titleHeight);
+        gameTitle.Draw();
 
         LCD.SetFontColor(GREEN);
         LCD.FillRectangle(buttonStartX, playStartY, buttonWidth, buttonHeight);
@@ -468,7 +527,6 @@ void Menu() {
         if(x >= buttonStartX && x <= buttonStartX + buttonWidth){
             if(y >= playStartY && y <= playStartY + buttonHeight){
                 Play();
-                Sleep(1.0);
             } else if(y >= statsStartY && y <= statsStartY + buttonHeight){
                 Statistics();
             } else if(y >= instructionsStartY && y <= instructionsStartY + buttonHeight){
