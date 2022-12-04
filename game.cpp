@@ -235,7 +235,7 @@ void Game::spawnEnemy() {
             initialY = (rand() % (WINDOW_HEIGHT - tempEnemy.height - 1));
             break;
         case 3:
-            initialX = rand() % (320 - tempEnemy.width - 1);
+            initialX = rand() % (WINDOW_WIDTH - tempEnemy.width - 1);
             initialY = WINDOW_HEIGHT - tempEnemy.height - 1;
             break;
     }
@@ -403,20 +403,40 @@ void Game::handleCollisions() {
     Authors: Thomas Banko
 */
 void Game::playerOutOfBounds() {
-    if (player.pos.x <= 1) {
-        player.pos.x = 1;
-        gameOver = true;
-    }
-    if (player.pos.x >= WINDOW_WIDTH - player.width - 1) {
-        player.pos.x = WINDOW_WIDTH - player.width - 1;
-        gameOver = true;
-    }
-    if (player.pos.y <= 1) {
-        player.pos.y = 1;
-        gameOver = true;
-    }
-    if (player.pos.y >= WINDOW_HEIGHT - player.height - 1) {
-        player.pos.y = WINDOW_HEIGHT - player.height - 1;
+    // Checks if player is out of bounds
+    if (player.pos.x <= 1 || player.pos.x >= WINDOW_WIDTH - player.width - 1 || 
+            player.pos.y <= 1 || player.pos.y >= WINDOW_HEIGHT - player.height - 1) {
+        // initializes varables for calculations
+        Vector2D prevPos = player.pos.sub(player.vel.add(player.velG));
+        float slope, tempX = player.pos.x, tempY = player.pos.y;
+        
+        // recalculates position if player x pos is out of bounds
+        if (tempX <= 1) {
+            slope = (player.vel.y + player.velG.y)/player.vel.x;
+            tempY = prevPos.y + slope * (1 - prevPos.x);
+            tempX = 1;
+        } else if (tempX >= WINDOW_WIDTH - player.width - 1) {
+            slope = (player.vel.y + player.velG.y)/player.vel.x;
+            tempY = prevPos.y + slope * ((WINDOW_WIDTH - player.width - 1) - prevPos.x);
+            tempX = WINDOW_WIDTH - player.width - 1;
+        }
+        
+        // recalculates position if player y pos is out of bounds
+        if (tempY <= 1) {
+            slope = player.vel.x/(player.vel.y + player.velG.y);
+            tempX = prevPos.x + slope * (1 - prevPos.y);
+            tempY = 1;
+        } else if (tempY >= WINDOW_HEIGHT - player.height - 1) {
+            slope = player.vel.x/(player.vel.y + player.velG.y);
+            tempX = prevPos.x + slope * ((WINDOW_HEIGHT - player.height - 1) - prevPos.y);
+            tempY = WINDOW_HEIGHT - player.height - 1;
+        }
+        
+        // sets player pos to the calculated pos
+        player.pos.x = tempX;
+        player.pos.y = tempY;
+        
+        // end game
         gameOver = true;
     }
 }
