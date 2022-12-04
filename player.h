@@ -22,6 +22,7 @@ class Game;
         ammo: amount of ammo the player has available to shoot
         playerImage: the image that the player is rendered as
         theme: the theme of the player
+        flipped: whether the image is flipped horizontally
 
     Contains methods that:
         Player(int): creates a player based on the theme passed as an argument
@@ -42,6 +43,7 @@ class Player {
         int ammo;
         Image playerImage;
         int theme;
+        bool flipped;
         
         Player(int theme);
         Vector2D getCenter();

@@ -3,6 +3,8 @@
 #include "FEHLCD.h"
 #include <math.h>
 
+#define PI 3.1415
+
 /*
     Creates an Enemy object
 
@@ -14,7 +16,7 @@
 
     Return value: none
 
-    Authors: Aryan Panpalia
+    Authors: Aryan Panpalia and Thomas Banko
 */
 Enemy::Enemy(float initialX, float initialY, float a, Game *g) {
     game = g;
@@ -26,8 +28,17 @@ Enemy::Enemy(float initialX, float initialY, float a, Game *g) {
         enemyImage.Open("SpaceEnemy.pic");
     } else if(game->theme == 1) {
         char fname[50];
-        snprintf(fname, 50, "Bandit_%d.pic", (rand() % 2) + 1);
-        enemyImage.Open(fname);
+        enemyType = (rand() % 2) + 1;
+
+        if(a >= PI / 2 || a < -PI / 2) {
+            snprintf(fname, 50, "WesternEnemy_%dFlipped.pic", enemyType);
+            enemyImage.Open(fname);
+            flipped = true;
+        } else {
+            snprintf(fname, 50, "WesternEnemy_%d.pic", enemyType);
+            enemyImage.Open(fname);
+            flipped = false;  
+        }
     }
     
     width = enemyImage.cols;
@@ -99,4 +110,24 @@ void Enemy::render() {
 void Enemy::shoot() {
     Vector2D center = getCenter();
     game->trackerBullets.push_back(TrackerBullet(center.x, center.y, &game->player, game->theme));
+
+    // Determine orientation of enemy if using western theme
+    if (game->theme == 1) {
+        Vector2D direction = game->player.pos.sub(center);
+        float angle = atan2(direction.y, direction.x);
+
+        if(angle >= PI/2 || angle < -PI/2) {
+            if (!flipped) {
+                char fname[50];
+                snprintf(fname, 50, "WesternEnemy_%dFlipped.pic", enemyType);
+                enemyImage.Open(fname);
+                flipped = true;
+            }
+        } else if(flipped) {
+            char fname[50];
+            snprintf(fname, 50, "WesternEnemy_%d.pic", enemyType);
+            enemyImage.Open(fname);
+            flipped = false;
+        }
+    }    
 }

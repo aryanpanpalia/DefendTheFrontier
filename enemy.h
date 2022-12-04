@@ -18,6 +18,8 @@ class Game;
         force: the force that is being exterted on the object
         mass: the mass of the enemy
         enemyImage: the image that the enemy is rendered as
+        enemyType: for western theme, which enemy image to render
+        flipped: whether the image is flipped horizontally
 
     Contains methods that:
         Enemy(float, float, float): creates a enemy given the arguments
@@ -36,6 +38,8 @@ class Enemy {
         Vector2D pos, vel, force;
         float mass;
         Image enemyImage;
+        int enemyType;
+        bool flipped;
 
         Enemy(float initialX, float initialY, float angle, Game *game);
         Vector2D getCenter();

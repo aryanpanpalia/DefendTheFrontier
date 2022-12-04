@@ -7,6 +7,7 @@
 
 #define WINDOW_WIDTH 320
 #define WINDOW_HEIGHT 240
+#define PI 3.1415
 
 /*
     Creates a player
@@ -25,6 +26,7 @@ Player::Player(int thm) {
         playerImage.Open("SpacePlayer.pic");
     } else if(theme == 1) {
         playerImage.Open("WesternPlayer.pic");
+        flipped = false;
     }
     
     width = playerImage.cols;
@@ -129,7 +131,7 @@ void Player::update() {
 
     Return value: none
 
-    Authors: Aryan Panpalia
+    Authors: Aryan Panpalia and Thomas Banko
 */
 void Player::shoot(float angle) {
     // if player has ammo
@@ -158,6 +160,19 @@ void Player::shoot(float angle) {
         ammo--;
 
         game->numShots++;
+
+        // Determine orientation of player image if using western theme
+        if (game->theme != 0) {
+            if (angle >= PI/2 || angle < -PI/2) {
+                if (!flipped) {
+                    playerImage.Open("WesternPlayerFlipped.pic");
+                    flipped = true;
+                }
+            } else if (flipped) {
+                playerImage.Open("WesternPlayer.pic");
+                flipped = false;
+            }
+        }
     }
 }
 
