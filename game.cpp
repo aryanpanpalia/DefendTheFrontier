@@ -434,16 +434,19 @@ void Game::playerOutOfBounds() {
         // initializes varables for calculations
         Vector2D prevPos = player.pos.sub(player.vel.add(player.velG));
         float slope, tempX = player.pos.x, tempY = player.pos.y;
+        bool right = false, up = false, left = false, down = false;
         
         // recalculates position if player x pos is out of bounds
         if (tempX <= 1) {
             slope = (player.vel.y + player.velG.y)/player.vel.x;
             tempY = prevPos.y + slope * (1 - prevPos.x);
             tempX = 1;
+            left = true;
         } else if (tempX >= WINDOW_WIDTH - player.width - 1) {
             slope = (player.vel.y + player.velG.y)/player.vel.x;
             tempY = prevPos.y + slope * ((WINDOW_WIDTH - player.width - 1) - prevPos.x);
             tempX = WINDOW_WIDTH - player.width - 1;
+            right = true;
         }
         
         // recalculates position if player y pos is out of bounds
@@ -451,17 +454,38 @@ void Game::playerOutOfBounds() {
             slope = player.vel.x/(player.vel.y + player.velG.y);
             tempX = prevPos.x + slope * (1 - prevPos.y);
             tempY = 1;
+            up = true;
         } else if (tempY >= WINDOW_HEIGHT - player.height - 1) {
             slope = player.vel.x/(player.vel.y + player.velG.y);
             tempX = prevPos.x + slope * ((WINDOW_HEIGHT - player.height - 1) - prevPos.y);
             tempY = WINDOW_HEIGHT - player.height - 1;
+            down = true;
         }
         
         // sets player pos to the calculated pos
         player.pos.x = tempX;
         player.pos.y = tempY;
         
-        // end game
-        gameOver = true;
+        // Ends game if not on easy mode
+        // Else, bounces off the wall
+        if(difficulty > 0) {
+            gameOver = true;
+        } else {
+            if(up) {
+                player.velG.reset();
+                player.vel.y = 3;
+                player.force.y = 3;
+            } else if(left) {
+                player.vel.x = 3;
+                player.force.x = 3;
+            } else if(down) {
+                player.velG.reset();
+                player.vel.y = -3;
+                player.force.y = -3;
+            } else if(right) {
+                player.vel.x = -3;
+                player.force.x = -3;
+            }
+        }
     }
 }
