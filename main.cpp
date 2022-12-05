@@ -9,8 +9,10 @@
 #define WINDOW_HEIGHT 240
 
 using namespace FEHIcon;
+using namespace std;
 
 // Stores game statistics
+string name1, name2, name3;
 int highScore1 = 0, highScore2 = 0, highScore3 = 0, totalEnemiesKilled = 0, totalShots = 0, totalDeaths = 0;
 
 /*
@@ -188,6 +190,67 @@ int SelectTheme() {
 }
 
 /*
+    Prompts user to input their name
+
+    Parameters: none
+    Return value: user's name
+*/
+string InputName() {
+    Icon icons[36];
+    char iconStrings[36][20] = {0};
+    for(int i = 0; i < 36; i++) {
+        iconStrings[i][0] = i < 10 ? (char) (i + 48) : (char) (i + 55);
+    }
+
+    int startX = 10;
+    int startY = 80;
+    int width = 40;
+    int height = 25;
+
+    Icon enterButton;
+    char enterString[] = "Enter";
+    int enterStartX = 253;
+    int enterStartY = 130;
+    int enterWidth = 64;
+    int enterHeight = 50;
+
+    enterButton.SetProperties(enterString, enterStartX, enterStartY, enterWidth, enterHeight, GREEN, WHITE);
+
+    float x, y;
+    char name[20] = {0};
+    
+    while(true) {
+        // Clears the screen then draws all the buttons
+        LCD.Clear();
+
+        LCD.WriteAt(name, 40, 20);
+        DrawIconArray(icons, 6, 6, startY, WINDOW_HEIGHT - startY - 6 * height, startX, WINDOW_WIDTH - startX - 6 * width, iconStrings, WHITE, WHITE);
+        
+        LCD.SetFontColor(GREEN);
+        LCD.FillRectangle(enterStartX, enterStartY, enterWidth, enterHeight);
+        enterButton.Draw();
+        LCD.SetFontColor(WHITE);
+
+        // Waits for someone to touch the screen
+        while(!LCD.Touch(&x, &y));
+
+        // Waits for someone to release their touch
+        while(LCD.Touch(&x, &y));
+
+        if(startX < x && x < startX + 6 * width && startY < y && y < startY + 6 * height) {
+            int col = (x - startX) / width;
+            int row = (y - startY) / height;
+            int index = 6 * row + col;
+
+            char ch = index < 10 ? (char) (index + 48) : (char) (index + 55);
+            strncat(name, &ch, 1);
+        } else if (x >= enterStartX && x <= enterStartX + enterWidth && y >= enterStartY && y <= enterStartY + enterHeight) {
+            return name;
+        }
+    }
+}
+
+/*
     Sets up and runs the game
 
     Parameters: none
@@ -279,24 +342,32 @@ void Play(){
         }
     }
 
+    // Waits a second before exiting the game
+    Sleep(1.0);
+
     // Adjusts statistics based on previous game's results
     if (game.score > highScore1) {
         highScore3 = highScore2;
         highScore2 = highScore1;
         highScore1 = game.score;
+
+        name3 = name2;
+        name2 = name1;
+        name1 = InputName();
     } else if (game.score > highScore2) {
         highScore3 = highScore2;
         highScore2 = game.score;
+
+        name3 = name2;
+        name2 = InputName();
     } else if (game.score > highScore3) {
         highScore3 = game.score;
+        name3 = InputName();
     }
 
     totalEnemiesKilled += game.numEnemiesKilled;
     totalShots += game.numShots;
     totalDeaths += 1;
-
-    // Waits a second before exiting the game
-    Sleep(1.0);
 }
 
 /*
@@ -327,9 +398,9 @@ void Statistics() {
     LCD.Clear();
 
     // Writes the statistics to the screen
-    LCD.WriteAt("High Score 1:", 10, 10);       LCD.WriteAt(highScore1, WINDOW_WIDTH-100, 10);
-    LCD.WriteAt("High Score 2:", 10, 30);       LCD.WriteAt(highScore2, WINDOW_WIDTH-100, 30);
-    LCD.WriteAt("High Score 3:", 10, 50);       LCD.WriteAt(highScore3, WINDOW_WIDTH-100, 50);
+    LCD.WriteAt(name1, 10, 10);       LCD.WriteAt(highScore1, WINDOW_WIDTH-100, 10);
+    LCD.WriteAt(name2, 10, 30);       LCD.WriteAt(highScore2, WINDOW_WIDTH-100, 30);
+    LCD.WriteAt(name3, 10, 50);       LCD.WriteAt(highScore3, WINDOW_WIDTH-100, 50);
     LCD.WriteAt("# Enemies Killed:", 10, 70);   LCD.WriteAt(totalEnemiesKilled, WINDOW_WIDTH-100, 70);
     LCD.WriteAt("# Shots fired:", 10, 90);      LCD.WriteAt(totalShots, WINDOW_WIDTH-100, 90);
     LCD.WriteAt("# Deaths:", 10, 110);          LCD.WriteAt(totalDeaths, WINDOW_WIDTH-100, 110);
