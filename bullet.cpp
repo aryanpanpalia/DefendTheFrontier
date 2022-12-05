@@ -32,12 +32,19 @@ Bullet::Bullet(float initialX, float initialY, float a, int theme) {
     angle = a;
     frameCount = 0;
     
+    // Goes through the bulletImages array
     for(int i = 0; i < 4; i++) {
+        // String to store the image filename
         char fname[50];
+
+        // If theme = 0 (space theme) load the space bullet images
+        // Else if theme = 1 (western theme) load the western bullet images
         if(theme == 0) {
+            // Stores the image filename in fname
             snprintf(fname, 50, "ElectroBall_%d.pic", i + 1);
             bulletImages[i].Open(fname);
         } else if(theme == 1) {
+            // Calculates the approximate angle in degrees, as there are only unique images for angles 0 to 180 increasing by 10
             int angleInDegrees = (180 * angle) / PI;
             int imageAngle = ((int) angleInDegrees / 10) * 10;
 
@@ -45,6 +52,7 @@ Bullet::Bullet(float initialX, float initialY, float a, int theme) {
                 snprintf(fname, 50, "bulletImages/Bullet%d.pic", imageAngle);
                 bulletImages[i].Open(fname);
             } else {
+                // Opens up the image for an angle 180 degrees greater then rotates it 180 degrees
                 imageAngle += 180;
                 snprintf(fname, 50, "bulletImages/Bullet%d.pic", imageAngle);
                 bulletImages[i].Open(fname);
@@ -109,6 +117,7 @@ void Bullet::update() {
     Authors: Aryan Panpalia and Thomas Banko
 */
 void Bullet::render() {
+    // Every 10 frames, change which image is displayed for the bullet
     if(frameCount % 10 == 0) {
         imageIndex++;
         imageIndex %= 4;
@@ -140,7 +149,10 @@ TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p, int them
     vel = player->pos.sub(pos).norm();
 
     for(int i = 0; i < 2; i++) {
+        // Stores the filename of the image to open
         char fname[50];
+
+        // Loads in a filename to fname depending on the theme
         if(theme == 0) {
             snprintf(fname, 50, "SpaceEnemyBullet_%d.pic", i + 1);
         } else if (theme == 1) { 
@@ -154,7 +166,6 @@ TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p, int them
     height = trackerBulletImages[0].rows;
 
     imageIndex = 0;
-
 }
 
 /*
@@ -180,6 +191,7 @@ void TrackerBullet::update() {
     Authors: Aryan Panpalia and Thomas Banko
 */
 void TrackerBullet::render() {
+    // Changes the image displayed for the tracker bullet every 10 frames
     if(frameCount % 10 == 0) {
         imageIndex++;
         imageIndex %= 2;

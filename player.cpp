@@ -22,6 +22,7 @@
 Player::Player(int thm) {
     theme = thm;
 
+    // Opens a player image depending on the theme
     if(theme == 0) {
         playerImage.Open("SpacePlayer.pic");
     } else if(theme == 1) {
@@ -156,12 +157,14 @@ void Player::shoot(float angle) {
         Vector2D center = getCenter();
         game->bullets.push_back(Bullet(center.x, center.y, angle, theme));
 
-        // decrement ammo
+        // Decrement ammo
         ammo--;
 
+        // Increment numShots
         game->numShots++;
 
         // Determine orientation of player image if using western theme
+        // Flips the player to face the direction of the shot if necessary
         if (game->theme != 0) {
             if (angle >= PI/2 || angle < -PI/2) {
                 if (!flipped) {

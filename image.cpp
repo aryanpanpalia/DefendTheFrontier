@@ -105,21 +105,26 @@ void Image::Draw(int x, int y)
 	Authors: Aryan Panpalia
 */
 void Image::Rotate180() {
+	// Allocates memory for new image
 	int *newImage = (int*)malloc(sizeof(int) * rows * cols);
 
+	// Goes through the rows and columns of the old image
 	for (int oldRow = 0; oldRow < rows; oldRow++)
 	{
 		for (int oldCol = 0; oldCol < cols; oldCol++)
 		{
+			// Calculates the position on the new image to put the pixel value of the old image at this row and column
 			int newRow = rows - oldRow - 1;
 			int newCol = cols - oldCol - 1;
 			newImage[newRow * cols + newCol] = saved_image[oldRow * cols + oldCol];
 		}
 	}
 
+	// Deallocates saved_image
 	if (saved_image != NULL) {
 		free(saved_image);
 	}
+
 	saved_image = newImage;
 }
 

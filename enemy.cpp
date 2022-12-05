@@ -24,12 +24,15 @@ Enemy::Enemy(float initialX, float initialY, float a, Game *g) {
     pos = Vector2D(initialX, initialY);
     vel = Vector2D(cos(a), -sin(a));
 
+    // Opens up an enemy image depending on the theme and the angle at which the enemy is moving
     if(game->theme == 0) {
         enemyImage.Open("SpaceEnemy.pic");
     } else if(game->theme == 1) {
         char fname[50];
         enemyType = (rand() % 2) + 1;
 
+        // If enemy is facing left, open the flipped image
+        // Else, open the normal image
         if(a >= PI / 2 || a < -PI / 2) {
             snprintf(fname, 50, "WesternEnemy_%dFlipped.pic", enemyType);
             enemyImage.Open(fname);
@@ -111,11 +114,14 @@ void Enemy::shoot() {
     Vector2D center = getCenter();
     game->trackerBullets.push_back(TrackerBullet(center.x, center.y, &game->player, game->theme));
 
-    // Determine orientation of enemy if using western theme
+    // If shooting away from the direction the enemy is facing, flip the orientation of the enemy image
     if (game->theme == 1) {
+        // Determines the angle of the shot
         Vector2D direction = game->player.pos.sub(center);
         float angle = atan2(direction.y, direction.x);
 
+        // If the enemy is shooting to the left and isn't flipped, flip it
+        // Else if it shooting to the right and is flipped, unflip it
         if(angle >= PI/2 || angle < -PI/2) {
             if (!flipped) {
                 char fname[50];

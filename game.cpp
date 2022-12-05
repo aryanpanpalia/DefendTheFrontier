@@ -30,6 +30,7 @@ Game::Game(int diff, int thm) : player(thm) {
     
     difficulty = diff;
 
+    // Sets game parameters to certain values depending on the difficulty level
     if(difficulty == 0) {
         player.ammo = 20;
         hasTrackerBullets = false;
@@ -54,12 +55,13 @@ Game::Game(int diff, int thm) : player(thm) {
         hasTrackerBullets = true;
         trackerBulletsKill = true;
         knockBack = 0;
-        ammoPerKill = 1;
+        ammoPerKill = 2;
         timeBetweenEnemySpawns = 1;
     }
 
     theme = thm;
 
+    // Opens background image depending on the theme
     if(theme == 0) {
         backgroundImage.Open("SpaceBackground.pic");
     } else if (theme == 1) { 
@@ -89,36 +91,46 @@ void Game::render() {
     backgroundImageX--;
     backgroundImageX %= backgroundImage.cols;
 
+    // Render all the bullets
     for(Bullet &bullet: bullets) {
         bullet.render();
     }
 
+    // Render the player
     player.render();
 
+    // Render all the tracker bullets
     for(TrackerBullet &trackerBullet: trackerBullets) {
         trackerBullet.render();
     }
 
+    // Render all the enemies
     for(Enemy &enemy: enemies) {
         enemy.render();
     }
 
+    // Draws a box around the window to mark where the game screen begins and ends
     LCD.SetFontColor(WHITE);
     LCD.DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+    // Displays the player's ammo
     LCD.WriteAt("Ammo: ", 5, 5);
     LCD.WriteAt(player.ammo, 65, 5);
 
+    // Calculates the score
     score = numEnemiesKilled * 10;
     
+    // Calculates the number of digits in the score
     int digitsInScore = 1;
     if(score >= 10) {
         digitsInScore = log10(score) + 1;
     }
 
+    // Calculates pixel width of score display string
     int scoreDigitsWidth = 12 * digitsInScore;
     int scoreTotalWidth = 84 + scoreDigitsWidth;
     
+    // Displays the current game score
     LCD.WriteAt("Score: ", WINDOW_WIDTH - scoreTotalWidth - 5, 5);
     LCD.WriteAt(score, WINDOW_WIDTH - scoreDigitsWidth - 5, 5);
 
@@ -218,9 +230,13 @@ void Game::update() {
 void Game::spawnEnemy() {
     float initialX, initialY, angle;
 
+    // Creates a temporary enemy off of which to calculate where to spawn a new enemy
     Enemy tempEnemy(0, 0, 0, this);
 
+    // Selects a random side (right, up, left, down)
     int side = rand() % 4;
+
+    // Sets initialX and initialY of the enemy to a random position at the edge of the selected side
     switch(side) {
         case 0:
             initialX = WINDOW_WIDTH - tempEnemy.width - 1;
@@ -240,6 +256,7 @@ void Game::spawnEnemy() {
             break;
     }
 
+    // Calculates angle to shoot enemy at
     angle = atan2(initialY - player.pos.y, player.pos.x - initialX);
 
     // Append new enemy to enemies vector
@@ -259,7 +276,10 @@ void Game::handleCollisions() {
     int *playerImageArray = player.playerImage.saved_image;
     
     for (int i = 0; i < enemies.size(); i++) {
+        // Aliases enemies[i]
         Enemy &enemy = enemies[i];
+
+        // Stores enemy's image array
         int *enemyImageArray = enemies[i].enemyImage.saved_image;
 
         /*
@@ -293,6 +313,7 @@ void Game::handleCollisions() {
         */
 
         for(int j = 0; j < bullets.size(); j++) {
+            // Aliases bullets[j]
             Bullet &bullet = bullets[j];
 
             // Stores bullet's image array
@@ -347,7 +368,10 @@ void Game::handleCollisions() {
     */
 
     for (int i = 0; i < trackerBullets.size(); i++) {
+        // Aliases trackerBullets[i]
         TrackerBullet &trackerBullet = trackerBullets[i];
+
+        // Stores the current trackerBullet image's array
         int *trackerBulletImageArray = trackerBullet.trackerBulletImages[trackerBullet.imageIndex].saved_image;
 
         // Tracks whether the current trackerBullet has hit the player
@@ -374,6 +398,7 @@ void Game::handleCollisions() {
                         }
                         
                         if(trackerBulletsKill) {
+                            // Ends the game
                             gameOver = true;
                         } else {
                             // Reset's player's force and set's its velocity to the trackerBullet's

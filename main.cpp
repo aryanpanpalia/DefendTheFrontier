@@ -10,6 +10,7 @@
 
 using namespace FEHIcon;
 
+// Stores game statistics
 int highScore1 = 0, highScore2 = 0, highScore3 = 0, totalEnemiesKilled = 0, totalShots = 0, totalDeaths = 0;
 
 /*
@@ -60,7 +61,7 @@ int SelectDifficulty() {
     int extremeStartY = easyStartY + buttonHeight + buffer;
 
     easyButton.SetProperties(easyString, easyStartX, easyStartY, buttonWidth, buttonHeight, GREEN, WHITE);
-    mediumButton.SetProperties(mediumString, mediumStartX, mediumStartY, buttonWidth, buttonHeight, YELLOW, WHITE);
+    mediumButton.SetProperties(mediumString, mediumStartX, mediumStartY, buttonWidth, buttonHeight, BLUE, WHITE);
     hardButton.SetProperties(hardString, hardStartX, hardStartY, buttonWidth, buttonHeight, ORANGE, WHITE);
     extremeButton.SetProperties(extremeString, extremeStartX, extremeStartY, buttonWidth, buttonHeight, RED, WHITE);
 
@@ -73,7 +74,7 @@ int SelectDifficulty() {
         LCD.FillRectangle(easyStartX, easyStartY, buttonWidth, buttonHeight);
         easyButton.Draw();
 
-        LCD.SetFontColor(YELLOW);
+        LCD.SetFontColor(BLUE);
         LCD.FillRectangle(mediumStartX, mediumStartY, buttonWidth, buttonHeight);
         mediumButton.Draw();
 
@@ -95,6 +96,7 @@ int SelectDifficulty() {
         // Waits for someone to release their touch
         while(LCD.Touch(&x, &y));
 
+        // If the player clicked on a certain button, return the difficulty clicked on
         if(easyStartX < x && x < easyStartX + buttonWidth && easyStartY < y && y < easyStartY + buttonHeight) {
             return 0;
         } else if(mediumStartX < x && x < mediumStartX + buttonWidth && mediumStartY < y && y < mediumStartY + buttonHeight) {
@@ -174,6 +176,7 @@ int SelectTheme() {
         // Waits for someone to release their touch
         while(LCD.Touch(&x, &y));
 
+        // Returns the theme selected depending on what was clicked or -1 if the back button was clicked
         if(spaceStartX < x && x < spaceStartX + buttonWidth && spaceStartY < y && y < spaceStartY + buttonHeight) {
             return 0;
         } else if(westernStartX < x && x < westernStartX + buttonWidth && westernStartY < y && y < westernStartY + buttonHeight) {
@@ -222,7 +225,10 @@ void Play(){
         // On click
         if(LCD.Touch(&x, &y) && !pressed) {
             pressed = true;
+
+            // Checks if the player clicked outside the player object
             if(!player.pointInPlayer(x, y)){
+                // Finds the angle at which to shoot at then shoots
                 Vector2D center = player.getCenter();
                 float dx = x - center.x;
                 float dy = center.y - y;
@@ -273,6 +279,7 @@ void Play(){
         }
     }
 
+    // Adjusts statistics based on previous game's results
     if (game.score > highScore1) {
         highScore3 = highScore2;
         highScore2 = highScore1;
@@ -288,6 +295,7 @@ void Play(){
     totalShots += game.numShots;
     totalDeaths += 1;
 
+    // Waits a second before exiting the game
     Sleep(1.0);
 }
 
@@ -311,19 +319,24 @@ void Statistics() {
     int buttonStartX = (WINDOW_WIDTH - buttonWidth) / 2;
     int buttonStartY = 175;
 
+    // Calculates the accuracy (0 if no shots have been fired)
+    float accuracy = totalShots == 0 ? 0 : (float) totalEnemiesKilled/totalShots;
+
     backButton.SetProperties(backString, buttonStartX, buttonStartY, buttonWidth, buttonHeight, RED, WHITE);
     
     LCD.Clear();
 
+    // Writes the statistics to the screen
     LCD.WriteAt("High Score 1:", 10, 10);       LCD.WriteAt(highScore1, WINDOW_WIDTH-100, 10);
     LCD.WriteAt("High Score 2:", 10, 30);       LCD.WriteAt(highScore2, WINDOW_WIDTH-100, 30);
     LCD.WriteAt("High Score 3:", 10, 50);       LCD.WriteAt(highScore3, WINDOW_WIDTH-100, 50);
     LCD.WriteAt("# Enemies Killed:", 10, 70);   LCD.WriteAt(totalEnemiesKilled, WINDOW_WIDTH-100, 70);
     LCD.WriteAt("# Shots fired:", 10, 90);      LCD.WriteAt(totalShots, WINDOW_WIDTH-100, 90);
     LCD.WriteAt("# Deaths:", 10, 110);          LCD.WriteAt(totalDeaths, WINDOW_WIDTH-100, 110);
-    LCD.WriteAt("% Accuracy:", 10, 130);        LCD.WriteAt((float)totalEnemiesKilled/totalShots, WINDOW_WIDTH-100, 130);
+    LCD.WriteAt("% Accuracy:", 10, 130);        LCD.WriteAt(accuracy, WINDOW_WIDTH-100, 130);
     LCD.WriteAt("", 10, 150);
 
+    // Draws the back button to the screen
     LCD.SetFontColor(RED);
     LCD.FillRectangle(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
     backButton.Draw();
@@ -336,6 +349,7 @@ void Statistics() {
         // Waits for someone to release their touch
         while(LCD.Touch(&x, &y));
 
+        // Goes back to the main menu if the back button is clicked
         if(x >= buttonStartX && x <= buttonStartX + buttonWidth && y >= buttonStartY && y <= buttonStartY + buttonHeight){
             return;
         }
@@ -366,6 +380,7 @@ void Instructions() {
     
     LCD.Clear();
 
+    // Writes the instructions to the screen
     LCD.WriteAt("To play, click anywhere", 10, 10);
     LCD.WriteAt("outside the player. Shoot", 10, 30);
     LCD.WriteAt("at enemies to kill them", 10, 50);
@@ -375,6 +390,7 @@ void Instructions() {
     LCD.WriteAt("an enemy or off the", 10, 130);
     LCD.WriteAt("screen or you'll lose!", 10, 150);
 
+    // Draws the back button to the screen
     LCD.SetFontColor(RED);
     LCD.FillRectangle(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
     backButton.Draw();
@@ -387,6 +403,7 @@ void Instructions() {
         // Waits for someone to release their touch
         while(LCD.Touch(&x, &y));
 
+        // Goes back to the main menu if the back button is clicked
         if(x >= buttonStartX && x <= buttonStartX + buttonWidth && y >= buttonStartY && y <= buttonStartY + buttonHeight){
             return;
         }
@@ -417,6 +434,7 @@ void Credits() {
     
     LCD.Clear();
 
+    // Writes the credits to the screen
     LCD.WriteAt("Game Title", 10, 10);
     LCD.WriteAt("Created By:", 10, 30);
     LCD.WriteAt("Aryan Panpalia", 10, 50);
@@ -426,6 +444,7 @@ void Credits() {
     LCD.WriteAt("Proteus Simulator", 10, 130);
     LCD.WriteAt("Libraries from OSU FEH", 10, 150);
 
+    // Draws the back button
     LCD.SetFontColor(RED);
     LCD.FillRectangle(buttonStartX, buttonStartY, buttonWidth, buttonHeight);
     backButton.Draw();
@@ -438,6 +457,7 @@ void Credits() {
         // Waits for someone to release their touch
         while(LCD.Touch(&x, &y));
 
+        // Goes back to the main menu if the back button is clicked
         if(x >= buttonStartX && x <= buttonStartX + buttonWidth && y >= buttonStartY && y <= buttonStartY + buttonHeight){
             return;
         }
