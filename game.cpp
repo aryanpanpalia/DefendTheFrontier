@@ -37,12 +37,14 @@ Game::Game(int diff, int thm) : player(thm) {
         trackerBulletsKill = false;
         ammoPerKill = 4;
         timeBetweenEnemySpawns = 3;
+        scorePerKill = 5;
     } else if(difficulty == 1) {
         player.ammo = 10;
         hasTrackerBullets = false;
         trackerBulletsKill = false;
         ammoPerKill = 2;
         timeBetweenEnemySpawns = 2;
+        scorePerKill = 10;
     } else if(difficulty == 2) {
         player.ammo = 10;
         hasTrackerBullets = true;
@@ -50,6 +52,7 @@ Game::Game(int diff, int thm) : player(thm) {
         knockBack = 4;
         ammoPerKill = 2;
         timeBetweenEnemySpawns = 2;
+        scorePerKill = 15;
     } else if(difficulty == 3) {
         player.ammo = 10;
         hasTrackerBullets = true;
@@ -57,6 +60,7 @@ Game::Game(int diff, int thm) : player(thm) {
         knockBack = 0;
         ammoPerKill = 2;
         timeBetweenEnemySpawns = 1;
+        scorePerKill = 25;
     }
 
     theme = thm;
@@ -116,9 +120,6 @@ void Game::render() {
     // Displays the player's ammo
     LCD.WriteAt("Ammo: ", 5, 5);
     LCD.WriteAt(player.ammo, 65, 5);
-
-    // Calculates the score
-    score = numEnemiesKilled * 10;
     
     // Calculates the number of digits in the score
     int digitsInScore = 1;
@@ -354,6 +355,9 @@ void Game::handleCollisions() {
 
                             // Give player ammo
                             player.ammo += ammoPerKill;
+
+                            // Add to the score
+                            score += scorePerKill;
 
                             goto breakOutOfBulletLoop;
                         }
