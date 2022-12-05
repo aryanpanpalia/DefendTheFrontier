@@ -12,8 +12,8 @@ using namespace FEHIcon;
 using namespace std;
 
 // Stores game statistics
-string name1, name2, name3;
-int highScore1 = 0, highScore2 = 0, highScore3 = 0, totalEnemiesKilled = 0, totalShots = 0, totalDeaths = 0;
+string name1, name2, name3, name4;
+int extremeHighScore = 0, hardHighScore = 0, mediumHighScore = 0, easyHighScore = 0, totalEnemiesKilled = 0, totalShots = 0, totalDeaths = 0;
 
 /*
     Prompts user to select the difficulty at which to play the game
@@ -346,23 +346,18 @@ void Play(){
     Sleep(1.0);
 
     // Adjusts statistics based on previous game's results
-    if (game.score > highScore1) {
-        highScore3 = highScore2;
-        highScore2 = highScore1;
-        highScore1 = game.score;
-
-        name3 = name2;
-        name2 = name1;
+    if (game.difficulty == 3 && game.score > extremeHighScore) {
+        extremeHighScore = game.score;
         name1 = InputName();
-    } else if (game.score > highScore2) {
-        highScore3 = highScore2;
-        highScore2 = game.score;
-
-        name3 = name2;
+    } else if (game.difficulty == 2 && game.score > hardHighScore) {
+        hardHighScore = game.score;
         name2 = InputName();
-    } else if (game.score > highScore3) {
-        highScore3 = game.score;
+    } else if (game.difficulty == 1 && game.score > mediumHighScore) {
+        mediumHighScore = game.score;
         name3 = InputName();
+    } else if (game.difficulty == 0 && game.score > easyHighScore) {
+        easyHighScore = game.score;
+        name4 = InputName();
     }
 
     totalEnemiesKilled += game.numEnemiesKilled;
@@ -388,7 +383,7 @@ void Statistics() {
 
     // Initial XY position of back button    
     int buttonStartX = (WINDOW_WIDTH - buttonWidth) / 2;
-    int buttonStartY = 175;
+    int buttonStartY = 190;
 
     // Calculates the accuracy (0 if no shots have been fired)
     float accuracy = totalShots == 0 ? 0 : (float) totalEnemiesKilled/totalShots;
@@ -398,14 +393,15 @@ void Statistics() {
     LCD.Clear();
 
     // Writes the statistics to the screen
-    LCD.WriteAt(name1, 10, 10);       LCD.WriteAt(highScore1, WINDOW_WIDTH-100, 10);
-    LCD.WriteAt(name2, 10, 30);       LCD.WriteAt(highScore2, WINDOW_WIDTH-100, 30);
-    LCD.WriteAt(name3, 10, 50);       LCD.WriteAt(highScore3, WINDOW_WIDTH-100, 50);
-    LCD.WriteAt("# Enemies Killed:", 10, 70);   LCD.WriteAt(totalEnemiesKilled, WINDOW_WIDTH-100, 70);
-    LCD.WriteAt("# Shots fired:", 10, 90);      LCD.WriteAt(totalShots, WINDOW_WIDTH-100, 90);
-    LCD.WriteAt("# Deaths:", 10, 110);          LCD.WriteAt(totalDeaths, WINDOW_WIDTH-100, 110);
-    LCD.WriteAt("% Accuracy:", 10, 130);        LCD.WriteAt(accuracy, WINDOW_WIDTH-100, 130);
-    LCD.WriteAt("", 10, 150);
+    LCD.WriteAt("High Scores", 10, 10);
+    LCD.WriteAt("Extreme", 10, 30); LCD.WriteAt(name1, 120, 30); LCD.WriteAt(extremeHighScore, WINDOW_WIDTH-100, 30);
+    LCD.WriteAt("Hard", 10, 50);    LCD.WriteAt(name2, 120, 50); LCD.WriteAt(hardHighScore, WINDOW_WIDTH-100, 50);
+    LCD.WriteAt("Medium", 10, 70);  LCD.WriteAt(name3, 120, 70); LCD.WriteAt(mediumHighScore, WINDOW_WIDTH-100, 70);
+    LCD.WriteAt("Easy", 10, 90);    LCD.WriteAt(name4, 120, 90); LCD.WriteAt(easyHighScore, WINDOW_WIDTH-100, 90);
+    LCD.WriteAt("# Enemies Killed:", 10, 110);   LCD.WriteAt(totalEnemiesKilled, WINDOW_WIDTH-100, 110);
+    LCD.WriteAt("# Shots fired:", 10, 130);      LCD.WriteAt(totalShots, WINDOW_WIDTH-100, 130);
+    LCD.WriteAt("# Deaths:", 10, 150);          LCD.WriteAt(totalDeaths, WINDOW_WIDTH-100, 150);
+    LCD.WriteAt("% Accuracy:", 10, 170);        LCD.WriteAt(accuracy, WINDOW_WIDTH-100, 170);
 
     // Draws the back button to the screen
     LCD.SetFontColor(RED);

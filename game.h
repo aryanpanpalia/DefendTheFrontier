@@ -58,7 +58,6 @@ class Game {
         int knockBack;
         int ammoPerKill;
         int timeBetweenEnemySpawns;
-        int scorePerKill;
 
         int theme;
 

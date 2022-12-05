@@ -37,14 +37,12 @@ Game::Game(int diff, int thm) : player(thm) {
         trackerBulletsKill = false;
         ammoPerKill = 4;
         timeBetweenEnemySpawns = 3;
-        scorePerKill = 5;
     } else if(difficulty == 1) {
         player.ammo = 10;
         hasTrackerBullets = false;
         trackerBulletsKill = false;
         ammoPerKill = 2;
         timeBetweenEnemySpawns = 2;
-        scorePerKill = 10;
     } else if(difficulty == 2) {
         player.ammo = 10;
         hasTrackerBullets = true;
@@ -52,7 +50,6 @@ Game::Game(int diff, int thm) : player(thm) {
         knockBack = 6;
         ammoPerKill = 2;
         timeBetweenEnemySpawns = 2;
-        scorePerKill = 15;
     } else if(difficulty == 3) {
         player.ammo = 10;
         hasTrackerBullets = true;
@@ -60,7 +57,6 @@ Game::Game(int diff, int thm) : player(thm) {
         knockBack = 0;
         ammoPerKill = 2;
         timeBetweenEnemySpawns = 1;
-        scorePerKill = 25;
     }
 
     theme = thm;
@@ -357,7 +353,7 @@ void Game::handleCollisions() {
                             player.ammo += ammoPerKill;
 
                             // Add to the score
-                            score += scorePerKill;
+                            score += 10;
 
                             goto breakOutOfBulletLoop;
                         }
