@@ -506,7 +506,7 @@ void Credits() {
     LCD.Clear();
 
     // Writes the credits to the screen
-    LCD.WriteAt("Game Title", 10, 10);
+    LCD.WriteAt("Frontier Defense", 10, 10);
     LCD.WriteAt("Created By:", 10, 30);
     LCD.WriteAt("Aryan Panpalia", 10, 50);
     LCD.WriteAt("and", 10, 70);
@@ -546,7 +546,7 @@ void Credits() {
 void Menu() {
     // Icon for title
     Icon gameTitle;
-    char titleString[] = "Defend The Frontier";
+    char titleString[] = "Frontier Defense";
 
     // Icons for all the menu options
     Icon playButton;
