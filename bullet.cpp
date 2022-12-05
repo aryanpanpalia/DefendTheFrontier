@@ -177,7 +177,7 @@ TrackerBullet::TrackerBullet(float initialX, float initialY, Player *p, int them
     Authors: Thomas Banko
 */
 void TrackerBullet::update() {
-    Vector2D force = player->pos.sub(pos).norm();
+    Vector2D force = player->getCenter().sub(getCenter()).norm().mult(1.5);
     vel = vel.add(force.div(mass));
     pos = pos.add(vel);
 }

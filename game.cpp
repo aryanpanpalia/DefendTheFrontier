@@ -49,7 +49,7 @@ Game::Game(int diff, int thm) : player(thm) {
         player.ammo = 10;
         hasTrackerBullets = true;
         trackerBulletsKill = false;
-        knockBack = 4;
+        knockBack = 6;
         ammoPerKill = 2;
         timeBetweenEnemySpawns = 2;
         scorePerKill = 15;
